@@ -93,6 +93,28 @@
 
 <div align="center">
   
+  # Contributors:
+  
+</div>
+
+  Contributions are welcome! Whether you want to fix bugs, add features, or add a language translation, your help is appreciated.
+  Please read [CONTRIBUTING.md](CONTRIBUTING.md) to get started, or browse [existing issues](https://github.com/YouG-o/YouTube_Custom_Settings/issues) to see what needs help.
+
+  <br>
+
+  
+  Thanks to all [contributors](./docs/CONTRIBUTORS_LIST.md) !
+  
+  <br>
+
+  ![Contributor](https://contrib.rocks/image?repo=YouG-o/YouTube_Custom_Settings)
+
+  
+
+###
+
+<div align="center">
+  
   ## Support This Project
 
 </div>  
