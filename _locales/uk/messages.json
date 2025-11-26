@@ -25,7 +25,7 @@
   },
 
   "tooltipVideoQuality": {
-    "message": "Встановіть бажану якість відео або встановіть власне значення.",
+    "message": "Встановіть вашу бажану якість відео або налаштуйте власні значення.",
     "description": "Tooltip explaining the video quality feature"
   },
 
@@ -45,7 +45,7 @@
   },
 
   "tooltipSubtitles": {
-    "message": "Відображати субтитри бажаною мовою, якщо доступно. Якщо ні, субтитри будуть вимкнені. Автоматично згенеровані субтитри ігноруються.",
+    "message": "Відображає субтитри вашою бажаною мовою (якщо доступно). Якщо їх немає, субтитри будуть вимкнені. Автоматично згенеровані субтитри ігноруються.",
     "description": "Tooltip explaining the subtitles feature"
   },
 
@@ -65,7 +65,7 @@
   },
 
   "tooltipVolume": {
-    "message": "Встановіть рівень гучності за замовчуванням (у відсотках)",
+    "message": "Встановіть ваш рівень гучності за замовчуванням (у відсотках)",
     "description": "Tooltip explaining the default volume feature"
   },
 
@@ -245,7 +245,7 @@
   },
 
   "tooltipApplyToShorts": {
-    "message": "Якщо вимкнено, shorts завжди відтворюватимуться зі звичайною швидкістю (x1).",
+    "message": "Якщо вимкнено, Shorts завжди відтворюватимуться зі звичайною швидкістю (x1).",
     "description": "Tooltip explaining the apply to Shorts toggle"
   },
 
@@ -350,7 +350,7 @@
   },
 
   "messageWelcome": {
-    "message": "Дякуємо за встановлення! Тут ви можете налаштувати поведінку розширення.",
+    "message": "Дякую за встановлення! Тут ви можете налаштувати функції розширення.",
     "description": "Welcome message shown on first install"
   },
 
@@ -360,17 +360,17 @@
   },
 
   "messageReloadExplanation": {
-    "message": "Щоб розширення працювало на вкладках YouTube, які були відкриті до встановлення, необхідно перезавантажити ці вкладки.",
+    "message": "Щоб розширення працювало на вкладках YouTube, які були відкриті раніше, їх потрібно перезавантажити.",
     "description": "Explanation text for why tabs need to be reloaded"
   },
 
   "buttonReloadTabs": {
-    "message": "Перезавантажити всі активні вкладки YouTube",
+    "message": "Перезавантажити всі відкриті вкладки YouTube",
     "description": "Button text to reload all YouTube tabs"
   },
 
   "messageSupportText": {
-    "message": "Ваша підтримка робить цей проєкт можливим. Кожен внесок допомагає, дякую!",
+    "message": "Ваша підтримка робить цей проєкт можливим. Кожен внесок допомагає, Дякую!",
     "description": "Support/donation message in footer"
   },
 
