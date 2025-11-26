@@ -1,0 +1,386 @@
+{
+  "extensionDescription": {
+    "message": "Налаштуйте свій досвід YouTube: якість відео, швидкість, субтитри, нормалізація звуку та інше",
+    "description": "Description of the extension shown in browser extensions page"
+  },
+
+  "createdBy": {
+    "message": "Розроблено YouGo",
+    "description": "Credit text in header. 'YouGo' is the author name and should not be translated"
+  },
+
+  "reportIssue": {
+    "message": "Повідомити про проблему",
+    "description": "Link text to report bugs on GitHub"
+  },
+
+  "version": {
+    "message": "v",
+    "description": "Version prefix. Do not translate - just the letter 'v'"
+  },
+
+  "featureVideoQuality": {
+    "message": "Якість відео",
+    "description": "Title of the video quality feature"
+  },
+
+  "tooltipVideoQuality": {
+    "message": "Встановіть бажану якість відео або встановіть власне значення.",
+    "description": "Tooltip explaining the video quality feature"
+  },
+
+  "featureVideoSpeed": {
+    "message": "Швидкість відео",
+    "description": "Title of the video speed feature"
+  },
+
+  "tooltipVideoSpeed": {
+    "message": "Виберіть ваше обмеження швидкості відео за замовчуванням",
+    "description": "Tooltip explaining the video speed feature"
+  },
+
+  "featureSubtitles": {
+    "message": "Субтитри",
+    "description": "Title of the subtitles feature"
+  },
+
+  "tooltipSubtitles": {
+    "message": "Відображати субтитри бажаною мовою, якщо доступно. Якщо ні, субтитри будуть вимкнені. Автоматично згенеровані субтитри ігноруються.",
+    "description": "Tooltip explaining the subtitles feature"
+  },
+
+  "featureAudioNormalizer": {
+    "message": "Нормалізувати звук",
+    "description": "Title of the audio normalizer feature"
+  },
+
+  "tooltipAudioNormalizer": {
+    "message": "Збалансуйте гучність звуку, щоб тихі частини були голоснішими, а гучні — тихішими",
+    "description": "Tooltip explaining the audio normalizer feature"
+  },
+
+  "featureVolume": {
+    "message": "Гучність за замовчуванням",
+    "description": "Title of the default volume feature"
+  },
+
+  "tooltipVolume": {
+    "message": "Встановіть рівень гучності за замовчуванням (у відсотках)",
+    "description": "Tooltip explaining the default volume feature"
+  },
+
+  "featureHideMembersOnly": {
+    "message": "Приховати відео лише для спонсорів",
+    "description": "Title of the hide members-only videos feature"
+  },
+
+  "tooltipHideMembersOnly": {
+    "message": "Приховати відео, призначені лише для спонсорів каналу.",
+    "description": "Tooltip explaining the hide members-only videos feature"
+  },
+
+  "featureAudioTrack": {
+    "message": "Мова звукової доріжки",
+    "description": "Title of the audio track language feature"
+  },
+
+  "tooltipAudioTrack": {
+    "message": "Примусово вказати мову звукової доріжки, якщо доступна (наприклад, оригінал, англійська, французька, тощо).",
+    "description": "Tooltip explaining the audio track language feature"
+  },
+
+  "featureHideShorts": {
+    "message": "Приховати YouTube Shorts",
+    "description": "Title of the hide YouTube Shorts feature"
+  },
+
+  "tooltipHideShorts": {
+    "message": "Приховуйте YouTube Shorts у своїй стрічці та рекомендаціях.",
+    "description": "Tooltip explaining the hide YouTube Shorts feature"
+  },
+
+  "featurePreventShortsLoop": {
+    "message": "Запобігти зацикленню Shorts",
+    "description": "Title of the prevent Shorts loop feature"
+  },
+
+  "tooltipPreventShortsLoop": {
+    "message": "Зупинити автоматичне повторне відтворення Shorts. Відео буде призупинено після завершення, а не зациклено.",
+    "description": "Tooltip explaining the prevent Shorts loop feature"
+  },
+
+  "optionAuto": {
+    "message": "Авто",
+    "description": "Option for automatic video quality selection"
+  },
+
+  "optionOriginal": {
+    "message": "Оригінал",
+    "description": "Option for original language (subtitles/audio)"
+  },
+
+  "optionDisabled": {
+    "message": "Завжди вимкнені",
+    "description": "Option to always disable subtitles"
+  },
+
+  "optionLight": {
+    "message": "Легкий",
+    "description": "Light intensity option for audio normalizer"
+  },
+
+  "optionMedium": {
+    "message": "Середній",
+    "description": "Medium intensity option for audio normalizer"
+  },
+
+  "optionStrong": {
+    "message": "Сильний",
+    "description": "Strong intensity option for audio normalizer"
+  },
+
+  "optionCustom": {
+    "message": "Власний",
+    "description": "Custom settings option"
+  },
+
+  "labelEnglish": {
+    "message": "Англійська",
+    "description": "English language option"
+  },
+
+  "labelFrench": {
+    "message": "Французька",
+    "description": "French language option"
+  },
+
+  "labelSpanish": {
+    "message": "Іспанська",
+    "description": "Spanish language option"
+  },
+
+  "labelArabic": {
+    "message": "Арабська",
+    "description": "Arabic language option"
+  },
+
+  "labelChinese": {
+    "message": "Китайська",
+    "description": "Chinese language option"
+  },
+
+  "labelDutch": {
+    "message": "Нідерландська",
+    "description": "Dutch language option"
+  },
+
+  "labelGerman": {
+    "message": "Німецька",
+    "description": "German language option"
+  },
+
+  "labelHebrew": {
+    "message": "Іврит",
+    "description": "Hebrew language option"
+  },
+
+  "labelHindi": {
+    "message": "Хінді",
+    "description": "Hindi language option"
+  },
+
+  "labelIndonesian": {
+    "message": "Індонезійська",
+    "description": "Indonesian language option"
+  },
+
+  "labelItalian": {
+    "message": "Італійська",
+    "description": "Italian language option"
+  },
+
+  "labelJapanese": {
+    "message": "Японська",
+    "description": "Japanese language option"
+  },
+
+  "labelKorean": {
+    "message": "Корейська",
+    "description": "Korean language option"
+  },
+
+  "labelPolish": {
+    "message": "Польська",
+    "description": "Polish language option"
+  },
+
+  "labelPortuguese": {
+    "message": "Португальська",
+    "description": "Portuguese language option"
+  },
+
+  "labelRussian": {
+    "message": "Російська",
+    "description": "Russian language option"
+  },
+
+  "labelTurkish": {
+    "message": "Турецька",
+    "description": "Turkish language option"
+  },
+
+  "labelUkrainian": {
+    "message": "Українська",
+    "description": "Ukrainian language option"
+  },
+
+  "labelVietnamese": {
+    "message": "В'єтнамська",
+    "description": "Vietnamese language option"
+  },
+
+  "labelApplyToShorts": {
+    "message": "Застосувати до YouTube Shorts",
+    "description": "Label for toggle to apply video speed to Shorts"
+  },
+
+  "tooltipApplyToShorts": {
+    "message": "Якщо вимкнено, shorts завжди відтворюватимуться зі звичайною швидкістю (x1).",
+    "description": "Tooltip explaining the apply to Shorts toggle"
+  },
+
+  "labelDontApplyToVideos": {
+    "message": "Не застосовувати до відео",
+    "description": "Label for duration rule to exclude certain videos from speed setting"
+  },
+
+  "tooltipDurationRule": {
+    "message": "Якщо ввімкнено, відео, що відповідають цьому правилу, завжди відтворюватимуться зі звичайною швидкістю (x1).",
+    "description": "Tooltip explaining the duration rule"
+  },
+
+  "labelMinutes": {
+    "message": "хвилин",
+    "description": "Unit label for duration in minutes"
+  },
+
+  "labelMins": {
+    "message": "хв",
+    "description": "Abbreviated unit label for minutes (used in compact view)"
+  },
+
+  "labelCustomQualityOrder": {
+    "message": "Увімкнути власний порядок якості",
+    "description": "Label for toggle to enable custom quality order"
+  },
+
+  "tooltipCustomQualityOrder": {
+    "message": "За замовчуванням, якщо бажана якість недоступна, використовується якість нижче. Увімкніть цю опцію, щоб встановити власний порядок якості.",
+    "description": "Tooltip explaining the custom quality order feature"
+  },
+
+  "buttonAddQuality": {
+    "message": "+ Додати якість",
+    "description": "Button text to add a quality to custom order list"
+  },
+
+  "buttonAdd": {
+    "message": "Додати",
+    "description": "Generic 'Add' button text"
+  },
+
+  "buttonCancel": {
+    "message": "Скасувати",
+    "description": "Generic 'Cancel' button text"
+  },
+
+  "messageCustomQualityHelp": {
+    "message": "Додайте якості у потрібному порядку. Перетягніть, щоб змінити порядок. Розширення використовуватиме першу доступну якість зі списку.",
+    "description": "Help text explaining how to use custom quality order"
+  },
+
+  "titleMoveUp": {
+    "message": "Перемістити вгору",
+    "description": "Title attribute for move up button"
+  },
+
+  "titleMoveDown": {
+    "message": "Перемістити вниз",
+    "description": "Title attribute for move down button"
+  },
+
+  "titleRemove": {
+    "message": "Видалити",
+    "description": "Title attribute for remove button"
+  },
+
+  "labelManualActivation": {
+    "message": "Активувати тільки після натискання кнопки",
+    "description": "Label for manual activation toggle of audio normalizer"
+  },
+
+  "titleButtonPreview": {
+    "message": "Кнопка з'являється так у плеєрі",
+    "description": "Title for button preview icon"
+  },
+
+  "labelThreshold": {
+    "message": "Поріг (дБ, від -60 до 0)",
+    "description": "Label for threshold slider in custom audio normalizer settings"
+  },
+
+  "labelBoost": {
+    "message": "Підсилення (1-3)",
+    "description": "Label for boost slider in custom audio normalizer settings"
+  },
+
+  "labelRatio": {
+    "message": "Співвідношення (1-20)",
+    "description": "Label for ratio slider in custom audio normalizer settings"
+  },
+
+  "labelAttack": {
+    "message": "Атака (с, 0.001-0.1)",
+    "description": "Label for attack slider in custom audio normalizer settings. 's' stands for seconds"
+  },
+
+  "labelRelease": {
+    "message": "Вивільнення (с, 0.01-1)",
+    "description": "Label for release slider in custom audio normalizer settings. 's' stands for seconds"
+  },
+
+  "messageWelcome": {
+    "message": "Дякуємо за встановлення! Тут ви можете налаштувати поведінку розширення.",
+    "description": "Welcome message shown on first install"
+  },
+
+  "messageReloadNotice": {
+    "message": "Важливо:",
+    "description": "Header text for reload notice banner"
+  },
+
+  "messageReloadExplanation": {
+    "message": "Щоб розширення працювало на вкладках YouTube, які були відкриті до встановлення, необхідно перезавантажити ці вкладки.",
+    "description": "Explanation text for why tabs need to be reloaded"
+  },
+
+  "buttonReloadTabs": {
+    "message": "Перезавантажити всі активні вкладки YouTube",
+    "description": "Button text to reload all YouTube tabs"
+  },
+
+  "messageSupportText": {
+    "message": "Ваша підтримка робить цей проєкт можливим. Кожен внесок допомагає, дякую!",
+    "description": "Support/donation message in footer"
+  },
+
+  "titleSupportKofi": {
+    "message": "Підтримайте мене на Ko-fi",
+    "description": "Title attribute for Ko-fi support link. 'Ko-fi' is a platform name and should not be translated"
+  },
+
+  "titleGithub": {
+    "message": "GitHub",
+    "description": "Title attribute for GitHub link. Do not translate 'GitHub'"
+  }
+}
