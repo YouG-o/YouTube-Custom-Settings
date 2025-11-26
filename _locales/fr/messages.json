@@ -1,0 +1,386 @@
+{
+  "extensionDescription": {
+    "message": "Personnalisez votre expérience YouTube en choisissant qualité, vitesse, langue des sous-titres, la normalisation audio et plus encore",
+    "description": "Description of the extension shown in the settings page"
+  },
+
+  "createdBy": {
+    "message": "Créé par YouGo",
+    "description": "Credit text in header. 'YouGo' is the author name and should not be translated"
+  },
+
+  "reportIssue": {
+    "message": "Signaler un problème",
+    "description": "Link text to report bugs on GitHub"
+  },
+
+  "version": {
+    "message": "v",
+    "description": "Version prefix. Do not translate - just the letter 'v'"
+  },
+
+  "featureVideoQuality": {
+    "message": "Qualité vidéo",
+    "description": "Title of the video quality feature"
+  },
+
+  "tooltipVideoQuality": {
+    "message": "Définissez votre qualité vidéo préférée ou créez un ordre personnalisé.",
+    "description": "Tooltip explaining the video quality feature"
+  },
+
+  "featureVideoSpeed": {
+    "message": "Vitesse de lecture",
+    "description": "Title of the video speed feature"
+  },
+
+  "tooltipVideoSpeed": {
+    "message": "Choisissez votre vitesse de lecture par défaut",
+    "description": "Tooltip explaining the video speed feature"
+  },
+
+  "featureSubtitles": {
+    "message": "Sous-titres",
+    "description": "Title of the subtitles feature"
+  },
+
+  "tooltipSubtitles": {
+    "message": "Afficher les sous-titres dans votre langue préférée si disponibles. Sinon, les sous-titres seront désactivés. Les sous-titres auto-générés sont ignorés.",
+    "description": "Tooltip explaining the subtitles feature"
+  },
+
+  "featureAudioNormalizer": {
+    "message": "Normaliser l'audio",
+    "description": "Title of the audio normalizer feature"
+  },
+
+  "tooltipAudioNormalizer": {
+    "message": "Équilibrer le volume sonore pour rendre les passages silencieux plus forts et les passages forts plus doux",
+    "description": "Tooltip explaining the audio normalizer feature"
+  },
+
+  "featureVolume": {
+    "message": "Volume par défaut",
+    "description": "Title of the default volume feature"
+  },
+
+  "tooltipVolume": {
+    "message": "Définissez votre niveau de volume par défaut (en pourcentage)",
+    "description": "Tooltip explaining the default volume feature"
+  },
+
+  "featureHideMembersOnly": {
+    "message": "Masquer les vidéos réservées aux membres",
+    "description": "Title of the hide members-only videos feature"
+  },
+
+  "tooltipHideMembersOnly": {
+    "message": "Masquer les vidéos réservées uniquement aux membres de la chaîne.",
+    "description": "Tooltip explaining the hide members-only videos feature"
+  },
+
+  "featureAudioTrack": {
+    "message": "Langue de la piste audio",
+    "description": "Title of the audio track language feature"
+  },
+
+  "tooltipAudioTrack": {
+    "message": "Forcer la langue de la piste audio si disponible (ex : original, fr, en, etc.).",
+    "description": "Tooltip explaining the audio track language feature"
+  },
+
+  "featureHideShorts": {
+    "message": "Masquer les YouTube Shorts",
+    "description": "Title of the hide YouTube Shorts feature"
+  },
+
+  "tooltipHideShorts": {
+    "message": "Masquer les YouTube Shorts de votre fil d'actualité et recommandations.",
+    "description": "Tooltip explaining the hide YouTube Shorts feature"
+  },
+
+  "featurePreventShortsLoop": {
+    "message": "Empêcher la lecture en boucle des Shorts",
+    "description": "Title of the prevent Shorts loop feature"
+  },
+
+  "tooltipPreventShortsLoop": {
+    "message": "Empêcher les Shorts de se relancer automatiquement. La vidéo se mettra en pause à la fin au lieu de boucler.",
+    "description": "Tooltip explaining the prevent Shorts loop feature"
+  },
+
+  "optionAuto": {
+    "message": "Auto",
+    "description": "Option for automatic video quality selection"
+  },
+
+  "optionOriginal": {
+    "message": "Original",
+    "description": "Option for original language (subtitles/audio)"
+  },
+
+  "optionDisabled": {
+    "message": "Toujours désactivés",
+    "description": "Option to always disable subtitles"
+  },
+
+  "optionLight": {
+    "message": "Léger",
+    "description": "Light intensity option for audio normalizer"
+  },
+
+  "optionMedium": {
+    "message": "Moyen",
+    "description": "Medium intensity option for audio normalizer"
+  },
+
+  "optionStrong": {
+    "message": "Fort",
+    "description": "Strong intensity option for audio normalizer"
+  },
+
+  "optionCustom": {
+    "message": "Personnalisé",
+    "description": "Custom settings option"
+  },
+
+  "labelEnglish": {
+    "message": "Anglais",
+    "description": "English language option"
+  },
+
+  "labelFrench": {
+    "message": "Français",
+    "description": "French language option"
+  },
+
+  "labelSpanish": {
+    "message": "Espagnol",
+    "description": "Spanish language option"
+  },
+
+  "labelArabic": {
+    "message": "Arabe",
+    "description": "Arabic language option"
+  },
+
+  "labelChinese": {
+    "message": "Chinois",
+    "description": "Chinese language option"
+  },
+
+  "labelDutch": {
+    "message": "Néerlandais",
+    "description": "Dutch language option"
+  },
+
+  "labelGerman": {
+    "message": "Allemand",
+    "description": "German language option"
+  },
+
+  "labelHebrew": {
+    "message": "Hébreu",
+    "description": "Hebrew language option"
+  },
+
+  "labelHindi": {
+    "message": "Hindi",
+    "description": "Hindi language option"
+  },
+
+  "labelIndonesian": {
+    "message": "Indonésien",
+    "description": "Indonesian language option"
+  },
+
+  "labelItalian": {
+    "message": "Italien",
+    "description": "Italian language option"
+  },
+
+  "labelJapanese": {
+    "message": "Japonais",
+    "description": "Japanese language option"
+  },
+
+  "labelKorean": {
+    "message": "Coréen",
+    "description": "Korean language option"
+  },
+
+  "labelPolish": {
+    "message": "Polonais",
+    "description": "Polish language option"
+  },
+
+  "labelPortuguese": {
+    "message": "Portugais",
+    "description": "Portuguese language option"
+  },
+
+  "labelRussian": {
+    "message": "Russe",
+    "description": "Russian language option"
+  },
+
+  "labelTurkish": {
+    "message": "Turc",
+    "description": "Turkish language option"
+  },
+
+  "labelUkrainian": {
+    "message": "Ukrainien",
+    "description": "Ukrainian language option"
+  },
+
+  "labelVietnamese": {
+    "message": "Vietnamien",
+    "description": "Vietnamese language option"
+  },
+
+  "labelApplyToShorts": {
+    "message": "Appliquer aux YouTube Shorts",
+    "description": "Label for toggle to apply video speed to Shorts"
+  },
+
+  "tooltipApplyToShorts": {
+    "message": "Si désactivé, les Shorts seront toujours lus à vitesse normale (x1).",
+    "description": "Tooltip explaining the apply to Shorts toggle"
+  },
+
+  "labelDontApplyToVideos": {
+    "message": "Ne pas appliquer aux vidéos",
+    "description": "Label for duration rule to exclude certain videos from speed setting"
+  },
+
+  "tooltipDurationRule": {
+    "message": "Si activé, les vidéos correspondant à cette règle seront toujours lues à vitesse normale (x1).",
+    "description": "Tooltip explaining the duration rule"
+  },
+
+  "labelMinutes": {
+    "message": "minutes",
+    "description": "Unit label for duration in minutes"
+  },
+
+  "labelMins": {
+    "message": "min",
+    "description": "Abbreviated unit label for minutes (used in compact view)"
+  },
+
+  "labelCustomQualityOrder": {
+    "message": "Activer l'ordre de qualité personnalisé",
+    "description": "Label for toggle to enable custom quality order"
+  },
+
+  "tooltipCustomQualityOrder": {
+    "message": "Par défaut, si la qualité préférée n'est pas disponible, la qualité inférieure est utilisée. Activez cette option pour définir un ordre personnalisé.",
+    "description": "Tooltip explaining the custom quality order feature"
+  },
+
+  "buttonAddQuality": {
+    "message": "+ Ajouter une qualité",
+    "description": "Button text to add a quality to custom order list"
+  },
+
+  "buttonAdd": {
+    "message": "Ajouter",
+    "description": "Generic 'Add' button text"
+  },
+
+  "buttonCancel": {
+    "message": "Annuler",
+    "description": "Generic 'Cancel' button text"
+  },
+
+  "messageCustomQualityHelp": {
+    "message": "Ajoutez les qualités dans votre ordre préféré. Faites glisser pour réorganiser. L'extension utilisera la première qualité disponible de votre liste.",
+    "description": "Help text explaining how to use custom quality order"
+  },
+
+  "titleMoveUp": {
+    "message": "Déplacer vers le haut",
+    "description": "Title attribute for move up button"
+  },
+
+  "titleMoveDown": {
+    "message": "Déplacer vers le bas",
+    "description": "Title attribute for move down button"
+  },
+
+  "titleRemove": {
+    "message": "Supprimer",
+    "description": "Title attribute for remove button"
+  },
+
+  "labelManualActivation": {
+    "message": "Activer uniquement quand je clique sur le bouton",
+    "description": "Label for manual activation toggle of audio normalizer"
+  },
+
+  "titleButtonPreview": {
+    "message": "Le bouton apparaît comme ceci dans le lecteur",
+    "description": "Title for button preview icon"
+  },
+
+  "labelThreshold": {
+    "message": "Seuil (dB, -60 à 0)",
+    "description": "Label for threshold slider in custom audio normalizer settings"
+  },
+
+  "labelBoost": {
+    "message": "Amplification (1-3)",
+    "description": "Label for boost slider in custom audio normalizer settings"
+  },
+
+  "labelRatio": {
+    "message": "Ratio (1-20)",
+    "description": "Label for ratio slider in custom audio normalizer settings"
+  },
+
+  "labelAttack": {
+    "message": "Attaque (s, 0.001-0.1)",
+    "description": "Label for attack slider in custom audio normalizer settings. 's' stands for seconds"
+  },
+
+  "labelRelease": {
+    "message": "Relâchement (s, 0.01-1)",
+    "description": "Label for release slider in custom audio normalizer settings. 's' stands for seconds"
+  },
+
+  "messageWelcome": {
+    "message": "Merci pour l'installation ! Ici vous pouvez configurer le comportement de l'extension.",
+    "description": "Welcome message shown on first install"
+  },
+
+  "messageReloadNotice": {
+    "message": "Important :",
+    "description": "Header text for reload notice banner"
+  },
+
+  "messageReloadExplanation": {
+    "message": "Pour que l'extension fonctionne sur les onglets YouTube qui étaient déjà ouverts avant l'installation, vous devez recharger ces onglets.",
+    "description": "Explanation text for why tabs need to be reloaded"
+  },
+
+  "buttonReloadTabs": {
+    "message": "Recharger tous les onglets YouTube actifs",
+    "description": "Button text to reload all YouTube tabs"
+  },
+
+  "messageSupportText": {
+    "message": "Votre soutien rend ce projet possible. Chaque contribution aide, merci !",
+    "description": "Support/donation message in footer"
+  },
+
+  "titleSupportKofi": {
+    "message": "Me soutenir sur Ko-fi",
+    "description": "Title attribute for Ko-fi support link. 'Ko-fi' is a platform name and should not be translated"
+  },
+
+  "titleGithub": {
+    "message": "GitHub",
+    "description": "Title attribute for GitHub link. Do not translate 'GitHub'"
+  }
+}
