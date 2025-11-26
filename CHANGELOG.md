@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.12.0] - 2025-11-26
+
+### Added
+- i18n locales support
+- Added French & Ukrainian translations of the add-on (thanks to [btncua](https://github.com/btncua) for Ukrainian translation)
+
 ## [1.11.1] - 2025-11-24
 
 ### Fix
@@ -116,7 +122,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *Note: This changelog was introduced in version 1.2.12. For earlier version history, please refer to the [GitHub releases](https://github.com/YouG-o/YouTube_Custom_Settings/releases).*
 
-[Unreleased]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.11.1...HEAD
+[Unreleased]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.12.0...HEAD
+[1.12.0]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.11.1...v1.12.0
 [1.11.1]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.11.0...v1.11.1
 [1.11.0]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.10.0...v1.11.0
 [1.10.0]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.9.3...v1.10.0
