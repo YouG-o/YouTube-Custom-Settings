@@ -12,6 +12,7 @@ const newManifest = {
   version: pkg.version,
   description: pkg.description,
   author: pkg.author,
+  default_locale: 'en',
   ...manifest
 };
 

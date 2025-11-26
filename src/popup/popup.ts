@@ -9,6 +9,7 @@
 
 import { ExtensionSettings } from '../types/types';
 import { loadExtensionSettings } from '../utils/settings';
+import { localizeDocument, getMessage } from '../utils/i18n';
 
 
 /**
@@ -101,7 +102,7 @@ function renderQualityOrderList(order: string[]) {
         moveUpBtn.type = 'button';
         moveUpBtn.className = 'move-up-btn text-gray-400 hover:text-blue-400 px-1';
         moveUpBtn.dataset.idx = String(idx);
-        moveUpBtn.title = 'Move up';
+        moveUpBtn.title = getMessage('titleMoveUp');
         moveUpBtn.textContent = '↑';
         moveUpBtn.disabled = idx === 0;
         
@@ -110,7 +111,7 @@ function renderQualityOrderList(order: string[]) {
         moveDownBtn.type = 'button';
         moveDownBtn.className = 'move-down-btn text-gray-400 hover:text-blue-400 px-1';
         moveDownBtn.dataset.idx = String(idx);
-        moveDownBtn.title = 'Move down';
+        moveDownBtn.title = getMessage('titleMoveDown');
         moveDownBtn.textContent = '↓';
         moveDownBtn.disabled = idx === order.length - 1;
         
@@ -119,7 +120,7 @@ function renderQualityOrderList(order: string[]) {
         removeBtn.type = 'button';
         removeBtn.className = 'remove-quality-btn text-red-400 hover:text-red-600 px-1';
         removeBtn.dataset.idx = String(idx);
-        removeBtn.title = 'Remove';
+        removeBtn.title = getMessage('titleRemove');
         removeBtn.textContent = '×';
         
         // Assemble the structure
@@ -184,11 +185,11 @@ addQualityBtn.addEventListener('click', () => {
     });
 
     const confirmBtn = document.createElement('button');
-    confirmBtn.textContent = 'Add';
+    confirmBtn.textContent = getMessage('buttonAdd');
     confirmBtn.className = 'ml-2 px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-500';
 
     const cancelBtn = document.createElement('button');
-    cancelBtn.textContent = 'Cancel';
+    cancelBtn.textContent = getMessage('buttonCancel');
     cancelBtn.className = 'ml-2 px-2 py-1 bg-gray-500 text-white rounded hover:bg-gray-400';
 
     const wrapper = document.createElement('div');
@@ -547,6 +548,7 @@ function initEventListeners() {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
+    localizeDocument();
     displayExtensionVersion();
     loadSettings();
     initEventListeners();
