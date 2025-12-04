@@ -30,7 +30,8 @@
         "*://*.youtube.com/*",
         "*://*.youtube-nocookie.com/*"
       ],
-      "js": ["dist/browser-polyfill.js", "dist/content/content.js"]
+      "js": ["dist/browser-polyfill.js", "dist/content/content.js"],
+      "all_frames": true
     }
   ],
 
