@@ -13,8 +13,6 @@ import { memberVideosLog } from "../../utils/logger";
 const fetchEndpoints = [
     '/youtubei/v1/search',
     '/youtubei/v1/browse',
-    '/youtubei/v1/next',
-    '/youtubei/v1/player'
 ];
 
 // Counter for removed sponsorship videos in the current fetch response
