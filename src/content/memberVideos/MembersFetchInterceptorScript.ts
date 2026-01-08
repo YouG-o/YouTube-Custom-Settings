@@ -17,6 +17,9 @@ const fetchEndpoints = [
     '/youtubei/v1/player'
 ];
 
+// Counter for removed sponsorship videos in the current fetch response
+let removedCount = 0;
+
 // Helper function to detect sponsorship badge
 function isSponsorshipVideo(videoRenderer: any): boolean {
     if (!videoRenderer || !Array.isArray(videoRenderer.badges)) return false;
@@ -40,7 +43,10 @@ function filterSponsorshipVideos(obj: any): any {
     if (!obj || typeof obj !== 'object') return obj;
 
     if (Array.isArray(obj)) {
-        return obj.filter(item => {
+        const filtered: any[] = [];
+        for (const item of obj) {
+            let remove = false;
+
             // Check for richItemRenderer > content > videoRenderer
             if (
                 item &&
@@ -51,22 +57,25 @@ function filterSponsorshipVideos(obj: any): any {
             ) {
                 const videoRenderer = item.richItemRenderer.content.videoRenderer;
                 const title = getVideoTitle(videoRenderer);
-                memberVideosLog(`[HYM] Removed members-only video: "%c${title}%c"`, 'color: white;', '');
-                return false;
+                //memberVideosLog(`[HYM] Removed members-only video: "%c${title}%c"`, 'color: white;', '');
+                removedCount++;
+                remove = true;
             }
+
             // Check for direct videoRenderer (for other layouts)
-            if (
-                item &&
-                item.videoRenderer &&
-                isSponsorshipVideo(item.videoRenderer)
-            ) {
+            if (!remove && item && item.videoRenderer && isSponsorshipVideo(item.videoRenderer)) {
                 const videoRenderer = item.videoRenderer;
                 const title = getVideoTitle(videoRenderer);
-                memberVideosLog(`[HYM] Removed members-only video: "%c${title}%c"`, 'color: white;', '');
-                return false;
+                //memberVideosLog(`[HYM] Removed members-only video: "%c${title}%c"`, 'color: white;', '');
+                removedCount++;
+                remove = true;
             }
-            return true;
-        }).map(filterSponsorshipVideos);
+
+            if (!remove) {
+                filtered.push(filterSponsorshipVideos(item));
+            }
+        }
+        return filtered;
     }
 
     // Recursively process all properties
@@ -95,7 +104,15 @@ window.fetch = function(input: RequestInfo | URL, init?: RequestInit): Promise<R
     if (fetchEndpoints.some(endpoint => url.includes(endpoint))) {
         return originalFetch(input, init).then(response => {
             return response.clone().json().then(data => {
+                // Reset counter for this response and run filter
+                removedCount = 0;
                 const filteredData = filterSponsorshipVideos(data);
+
+                // Log total removed in this fetch response, like the DOM method does
+                if (removedCount > 0) {
+                    memberVideosLog(`[HYM] Removed ${removedCount} members-only videos (Response-Interceptor method).`);
+                }
+
                 return new Response(JSON.stringify(filteredData), {
                     status: response.status,
                     statusText: response.statusText,
