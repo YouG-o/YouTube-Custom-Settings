@@ -31,8 +31,11 @@ export function hideMembersOnlyVideos() {
         }
 
         // "Members only" for related videos
-        const relatedMembersBadge = item.querySelector('.yt-badge-shape--commerce');
-        if (relatedMembersBadge) {
+        // only when the commerce badge contains an icon. Fundraiser badges
+        // usually contain only text (no `.yt-badge-shape__icon`), so this shoud be
+        // language-independent and avoids hiding fundraisers.
+        const relatedMembersBadgeIcon = item.querySelector('.yt-badge-shape--commerce .yt-badge-shape__icon');
+        if (relatedMembersBadgeIcon) {
             shouldHide = true;
         }
 

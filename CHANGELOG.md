@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+### Fixed
+- Improved detection of "Members Only" videos in the "related videos" section: now only hides `.yt-badge-shape--commerce` badges if they contain a `.yt-badge-shape__icon`, which is present on members-only badges but not on fundraiser/commerce badges. This avoids hiding fundraiser videos while still hiding members-only content in related lists.
+
 ## [1.12.1] - 2026-01-08
 
 ### Fix
