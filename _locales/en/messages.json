@@ -109,6 +109,16 @@
     "description": "Tooltip explaining the prevent Shorts loop feature"
   },
 
+  "featureDisableNumberShortcuts": {
+    "message": "Disable Player Number Shortcuts",
+    "description": "Title for the disable number keyboard shortcuts feature"
+  },
+
+  "tooltipDisableNumberShortcuts": {
+    "message": "Prevents number keys (0-9) from changing the video playback position. Useful to avoid accidental seeks when working on another screen.",
+    "description": "Tooltip for the disable number keyboard shortcuts feature"
+  },
+
   "optionAuto": {
     "message": "Auto",
     "description": "Option for automatic video quality selection"

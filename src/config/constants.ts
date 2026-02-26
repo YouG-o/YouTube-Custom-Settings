@@ -59,6 +59,9 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
     },
     preventShortsLoop: {
         enabled: false
+    },
+    disableNumberShortcuts: {
+        enabled: false
     }
 };
 
