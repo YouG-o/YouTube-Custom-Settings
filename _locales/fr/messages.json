@@ -109,6 +109,16 @@
     "description": "Tooltip explaining the prevent Shorts loop feature"
   },
 
+  "featureDisableNumberShortcuts": {
+    "message": "Désactiver les raccourcis numériques du lecteur",
+    "description": "Title for the disable number keyboard shortcuts feature"
+  },
+
+  "tooltipDisableNumberShortcuts": {
+    "message": "Empêche les touches numériques (0-9) de modifier la position de lecture de la vidéo. Utile pour éviter les sauts accidentels en travaillant sur un autre écran.",
+    "description": "Tooltip for the disable number keyboard shortcuts feature"
+  },
+
   "optionAuto": {
     "message": "Auto",
     "description": "Option for automatic video quality selection"

@@ -45,6 +45,10 @@ const LOG_STYLES = {
     SHORTS: {
         context: '[Shorts]',
         color: '#9c27b0'  // Purple
+    },
+    PLAYER: {
+        context: '[Player]',
+        color: '#f43f5e' // Rose
     }
 } as const;
 
@@ -101,6 +105,9 @@ const audioTrackErrorLog = createErrorLogger(LOG_STYLES.AUDIO_TRACK);
 const shortsLog = createLogger(LOG_STYLES.SHORTS);
 const shortsErrorLog = createErrorLogger(LOG_STYLES.SHORTS);
 
+const playerLog = createLogger(LOG_STYLES.PLAYER);
+const playerErrorLog = createErrorLogger(LOG_STYLES.PLAYER);
+
 export {
     coreLog,
     coreErrorLog,
@@ -119,5 +126,7 @@ export {
     audioTrackLog,
     audioTrackErrorLog,
     shortsLog,
-    shortsErrorLog
+    shortsErrorLog,
+    playerLog,
+    playerErrorLog
 };

@@ -54,7 +54,8 @@ function initializeVideoPlayerListener() {
         currentSettings?.subtitlesPreference.enabled ||
         currentSettings?.audioNormalizer.enabled ||
         currentSettings?.volume?.enabled ||
-        currentSettings?.audioTrack?.enabled
+        currentSettings?.audioTrack?.enabled ||
+        currentSettings?.disableNumberShortcuts?.enabled
     )) {
         setupVideoPlayerListener();
         videoPlayerListenerInitialized = true;

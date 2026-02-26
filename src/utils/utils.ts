@@ -14,6 +14,7 @@ import { handleSubtitlesPreference } from "../content/subtitles/SubtitlesPrefere
 import { handleAudioNormalizer } from "../content/audionormalizer/AudioNormalizer";
 import { handleVolume } from "../content/volume/Volume";
 import { handleAudioTrack } from "../content/audioTrack/AudioTrack";
+import { handleDisableNumberShortcuts } from "../content/disableNumberShortcuts/DisableNumberShortcuts";
 
 
 export function applyVideoPlayerSettings(): void {
@@ -23,4 +24,5 @@ export function applyVideoPlayerSettings(): void {
     currentSettings?.audioNormalizer.enabled && handleAudioNormalizer();
     currentSettings?.volume.enabled && handleVolume();
     currentSettings?.audioTrack.enabled && handleAudioTrack();
+    handleDisableNumberShortcuts();
 }

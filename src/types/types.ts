@@ -58,6 +58,9 @@ export interface ExtensionSettings {
     preventShortsLoop: {
         enabled: boolean;
     };
+    disableNumberShortcuts: {
+        enabled: boolean;
+    };
 }
 
 export interface Message {

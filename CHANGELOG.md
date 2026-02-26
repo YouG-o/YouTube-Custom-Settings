@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Disable Player Number Shortcuts**: New feature to prevent number keys (0-9) from changing the video's playback position. This is useful for users who work on a second screen while a video is playing.
+
 
 ### Fixed
 - Improved detection of "Members Only" videos in the "related videos" section: now only hides `.yt-badge-shape--commerce` badges if they contain a `.yt-badge-shape__icon`, which is present on members-only badges but not on fundraiser/commerce badges. This avoids hiding fundraiser videos while still hiding members-only content in related lists.
