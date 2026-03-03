@@ -11,25 +11,44 @@
 // Function to wait for an element to be present in the DOM
 export function waitForElement(selector: string, timeout = 7500): Promise<Element> {
     return new Promise((resolve, reject) => {
-        if (document.querySelector(selector)) {
-            return resolve(document.querySelector(selector)!);
+        const existingElement = document.querySelector(selector);
+        if (existingElement) {
+            return resolve(existingElement);
         }
 
-        const observer = new MutationObserver(() => {
-            if (document.querySelector(selector)) {
-                observer.disconnect();
-                resolve(document.querySelector(selector)!);
+        const observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+                if (mutation.type === 'childList') {
+                    for (const node of mutation.addedNodes) {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            const element = node as Element;
+                            if (element.matches(selector)) {
+                                observer.disconnect();
+                                clearTimeout(timer);
+                                resolve(element);
+                                return;
+                            }
+                            const descendant = element.querySelector(selector);
+                            if (descendant) {
+                                observer.disconnect();
+                                clearTimeout(timer);
+                                resolve(descendant);
+                                return;
+                            }
+                        }
+                    }
+                }
             }
         });
+
+        const timer = setTimeout(() => {
+            observer.disconnect();
+            reject(new Error('Timeout waiting for element: ' + selector));
+        }, timeout);
 
         observer.observe(document.body, {
             childList: true,
             subtree: true
         });
-
-        setTimeout(() => {
-            observer.disconnect();
-            reject('Timeout waiting for element : ' + selector);
-        }, timeout);
     });
 }
