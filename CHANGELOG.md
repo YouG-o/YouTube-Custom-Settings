@@ -7,12 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.13.0] - 2026-03-05
+
 ### Added
 - **Disable Player Number Shortcuts**: New feature to prevent number keys (0-9) from changing the video's playback position. This is useful for users who work on a second screen while a video is playing.
 
 
 ### Fixed
 - Improved detection of "Members Only" videos in the "related videos" section: now only hides `.yt-badge-shape--commerce` badges if they contain a `.yt-badge-shape__icon`, which is present on members-only badges but not on fundraiser/commerce badges. This avoids hiding fundraiser videos while still hiding members-only content in related lists.
+
+### Performances
+- Optimized waitForElement func to reduce DOM queries (checking addedNodes only)
+
 
 ## [1.12.1] - 2026-01-08
 
@@ -137,7 +143,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *Note: This changelog was introduced in version 1.2.12. For earlier version history, please refer to the [GitHub releases](https://github.com/YouG-o/YouTube_Custom_Settings/releases).*
 
-[Unreleased]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.12.1...HEAD
+[Unreleased]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.13.0...HEAD
+[1.13.0]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.12.1...v1.13.0
 [1.12.1]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.12.0...v1.12.1
 [1.12.0]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.11.1...v1.12.0
 [1.11.1]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.11.0...v1.11.1
