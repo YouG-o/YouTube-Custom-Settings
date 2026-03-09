@@ -62,6 +62,9 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
     },
     disableNumberShortcuts: {
         enabled: false
+    },
+    enableLogs: {
+        enabled: false
     }
 };
 

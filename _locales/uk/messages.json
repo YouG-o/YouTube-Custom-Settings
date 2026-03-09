@@ -119,6 +119,21 @@
     "description": "Tooltip for the disable number keyboard shortcuts feature"
   },
 
+  "extraSettings": {
+    "message": "Extra Settings",
+    "description": "Title of the collapsible extra settings section"
+  },
+
+  "featureEnableLogs": {
+    "message": "Enable Logs",
+    "description": "Title of the enable logs feature"
+  },
+
+  "tooltipEnableLogs": {
+    "message": "Enable debug logs in the browser console. Useful for troubleshooting. Disabled by default.",
+    "description": "Tooltip explaining the enable logs feature"
+  },
+
   "optionAuto": {
     "message": "Авто",
     "description": "Option for automatic video quality selection"

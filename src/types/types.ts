@@ -61,6 +61,9 @@ export interface ExtensionSettings {
     disableNumberShortcuts: {
         enabled: boolean;
     };
+    enableLogs: {
+        enabled: boolean;
+    };
 }
 
 export interface Message {

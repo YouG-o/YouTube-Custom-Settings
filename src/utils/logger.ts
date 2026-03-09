@@ -8,6 +8,46 @@
  */
 
 const LOG_PREFIX = '[YCS]';
+const YCS_SETTINGS_KEY = 'YCS_SETTINGS';
+
+// Internal function to sync logs state without overriding other features
+function syncLogSettings(enabled: boolean) {
+    try {
+        const raw = localStorage.getItem(YCS_SETTINGS_KEY);
+        const ycsSettings = raw ? JSON.parse(raw) : {};
+        ycsSettings.enableLogs = { enabled };
+        localStorage.setItem(YCS_SETTINGS_KEY, JSON.stringify(ycsSettings));
+    } catch (e) {
+        console.error('Failed to sync log settings to localStorage', e);
+    }
+}
+
+// Check if logs are enabled by parsing YCS_SETTINGS directly
+function areLogsEnabled(): boolean {
+    try {
+        const raw = localStorage.getItem(YCS_SETTINGS_KEY);
+        if (!raw) return false;
+        const ycsSettings = JSON.parse(raw);
+        return ycsSettings?.enableLogs?.enabled === true;
+    } catch {
+        return false;
+    }
+}
+
+// Initialize localStorage from storage on startup
+browser.storage.local.get('settings').then((data: any) => {
+    const isEnabled = data?.settings?.enableLogs?.enabled === true;
+    syncLogSettings(isEnabled);
+}).catch(() => {
+    syncLogSettings(false);
+});
+
+// Keep localStorage in sync when setting changes from popup
+browser.storage.onChanged.addListener((changes: any) => {
+    if (changes.settings?.newValue?.enableLogs !== undefined) {
+        syncLogSettings(changes.settings.newValue.enableLogs.enabled === true);
+    }
+});
 
 const LOG_STYLES = {
     CORE: {
@@ -57,6 +97,7 @@ const ERROR_COLOR = '#F44336';  // Red
 
 function createLogger(category: { context: string; color: string }) {
     return (message: string, ...args: any[]) => {
+        if (!areLogsEnabled()) return;
         console.log(
             `%c${LOG_PREFIX}${category.context} ${message}`,
             `color: ${category.color}`,
@@ -68,6 +109,7 @@ function createLogger(category: { context: string; color: string }) {
 // Create error logger function
 function createErrorLogger(category: { context: string; color: string }) {
     return (message: string, ...args: any[]) => {
+        if (!areLogsEnabled()) return;
         console.log(
             `%c${LOG_PREFIX}${category.context} %c${message}`,
             `color: ${category.color}`,  // Keep category color for prefix

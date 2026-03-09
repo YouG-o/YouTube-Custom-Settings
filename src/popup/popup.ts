@@ -42,6 +42,7 @@ const volumeContainer = document.getElementById('volumeContainer') as HTMLDivEle
 const hideShortsFeature = document.getElementById('hideShortsFeature') as HTMLInputElement;
 const preventShortsLoopFeature = document.getElementById('preventShortsLoopFeature') as HTMLInputElement;
 const disableNumberShortcutsFeature = document.getElementById('disableNumberShortcutsFeature') as HTMLInputElement;
+const enableLogsFeature = document.getElementById('enableLogsFeature') as HTMLInputElement;
 
 // Custom settings
 const audioNormalizerCustomContainer = document.getElementById('audioNormalizerCustomContainer') as HTMLDivElement;
@@ -342,6 +343,10 @@ async function loadSettings() {
             disableNumberShortcutsFeature.checked = settings.disableNumberShortcuts.enabled;
         }
 
+        if (settings.enableLogs) {
+            enableLogsFeature.checked = settings.enableLogs.enabled;
+        }
+
         // Duration rule settings
         durationRuleEnabled.checked = settings.videoSpeed.durationRuleEnabled ?? false;
         durationRuleType.value = settings.videoSpeed.durationRuleType ?? 'less';
@@ -406,6 +411,9 @@ async function saveSettings() {
         },
         disableNumberShortcuts: {
             enabled: disableNumberShortcutsFeature.checked
+        },
+        enableLogs: {
+            enabled: enableLogsFeature.checked
         }
     };
     
@@ -491,6 +499,7 @@ function initEventListeners() {
     hideShortsFeature.addEventListener('change', saveSettings);
     preventShortsLoopFeature.addEventListener('change', saveSettings);
     disableNumberShortcutsFeature.addEventListener('change', saveSettings);
+    enableLogsFeature.addEventListener('change', saveSettings);
 
     durationRuleEnabled.addEventListener('change', saveSettings);
     durationRuleType.addEventListener('change', saveSettings);
@@ -562,4 +571,15 @@ document.addEventListener('DOMContentLoaded', () => {
     displayExtensionVersion();
     loadSettings();
     initEventListeners();
+
+    // Extra settings collapsible toggle
+    const extraToggle = document.getElementById('extraSettingsToggle');
+    const extraContent = document.getElementById('extraSettingsContent');
+    const extraArrow = document.getElementById('extraSettingsArrow');
+    if (extraToggle && extraContent && extraArrow) {
+        extraToggle.addEventListener('click', () => {
+            extraContent.classList.toggle('hidden');
+            extraArrow.style.transform = extraContent.classList.contains('hidden') ? '' : 'rotate(180deg)';
+        });
+    }
 });
