@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.13.1] - 2026-03-19
+
 ### Added
 - Added "Dev Log" toggle in extra settings (popup and settings page): enables/disables console logs for debugging. Disabled by default.
 
@@ -149,7 +151,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *Note: This changelog was introduced in version 1.2.12. For earlier version history, please refer to the [GitHub releases](https://github.com/YouG-o/YouTube_Custom_Settings/releases).*
 
-[Unreleased]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.13.0...HEAD
+[Unreleased]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.13.1...HEAD
+[1.13.1]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.13.0...v1.13.1
 [1.13.0]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.12.1...v1.13.0
 [1.12.1]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.12.0...v1.12.1
 [1.12.0]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.11.1...v1.12.0
