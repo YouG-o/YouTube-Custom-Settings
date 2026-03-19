@@ -8,7 +8,7 @@
  */
 
 import { shortsLog, shortsErrorLog } from '../../utils/logger';
-import { isHomePage, isSubscriptionsPage, isSearchPage } from '../../utils/pageDetection';
+import { isHomePage, isSubscriptionsPage, isSearchPage } from '../../utils/navigation';
 
 /**
  * Hide Shorts section from the home page feed and subscriptions page

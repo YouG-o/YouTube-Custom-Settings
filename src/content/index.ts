@@ -20,6 +20,7 @@ import { setupUrlObserver, setupVisibilityChangeListener } from './observers';
 import { injectFetchInterceptor, hideMembersOnlyVideos } from './memberVideos/MemberVideos';
 import { handleAudioTrack } from './audioTrack/AudioTrack';
 import { hideShorts } from './Shorts/hideShorts';
+import { isIrrelevantIframe } from '../utils/navigation';
 
 coreLog('Content script starting to load...');
 
@@ -27,6 +28,14 @@ export let currentSettings: ExtensionSettings | null = null;
 
 // Initialize features based on settings
 async function initializeFeatures() {
+
+    // Prevent initializing in irrelevant iframes (live chat, background auth pages, etc.)
+    // We only allow top-level windows OR embed pages.
+    if (isIrrelevantIframe()) {
+        return;
+    }
+    
+
     currentSettings = await loadExtensionSettings();
 
     // Apply settings

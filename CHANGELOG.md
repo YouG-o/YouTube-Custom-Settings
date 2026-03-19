@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added "Dev Log" toggle in extra settings (popup and settings page): enables/disables console logs for debugging. Disabled by default.
+
+### Params
+- Extension initialization is now completely blocked in irrelevant iframes (like live chat, background auth pages)
+
 ## [1.13.0] - 2026-03-05
 
 ### Added
