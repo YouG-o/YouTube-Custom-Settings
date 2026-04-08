@@ -218,6 +218,14 @@
                 // Find ASR track to determine original video language
                 const asrTrack = captionTracks.find(track => track.kind === 'asr');
                 if (!asrTrack) {
+                    // Fallback: if there's only one subtitle track, assume it's the original
+                    if (captionTracks.length === 1) {
+                        const singleTrack = captionTracks[0];
+                        log(`Only subtitle track found is manual, assuming it's original: "${singleTrack.name.simpleText}" [${singleTrack.languageCode}]`);
+                        player.setOption('captions', 'track', singleTrack);
+                        return true;
+                    }
+
                     log('Cannot determine original language, disabling subtitles');
                     player.setOption('captions', 'track', {});
                     return true;
