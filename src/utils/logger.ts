@@ -35,19 +35,21 @@ function areLogsEnabled(): boolean {
 }
 
 // Initialize localStorage from storage on startup
-browser.storage.local.get('settings').then((data: any) => {
-    const isEnabled = data?.settings?.enableLogs?.enabled === true;
-    syncLogSettings(isEnabled);
-}).catch(() => {
-    syncLogSettings(false);
-});
+if (typeof browser !== 'undefined' && browser.storage) {
+    browser.storage.local.get('settings').then((data: any) => {
+        const isEnabled = data?.settings?.enableLogs?.enabled === true;
+        syncLogSettings(isEnabled);
+    }).catch(() => {
+        syncLogSettings(false);
+    });
 
-// Keep localStorage in sync when setting changes from popup
-browser.storage.onChanged.addListener((changes: any) => {
-    if (changes.settings?.newValue?.enableLogs !== undefined) {
-        syncLogSettings(changes.settings.newValue.enableLogs.enabled === true);
-    }
-});
+    // Keep localStorage in sync when setting changes from popup
+    browser.storage.onChanged.addListener((changes: any) => {
+        if (changes.settings?.newValue?.enableLogs !== undefined) {
+            syncLogSettings(changes.settings.newValue.enableLogs.enabled === true);
+        }
+    });
+}
 
 const LOG_STYLES = {
     CORE: {

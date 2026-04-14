@@ -55,7 +55,7 @@ function filterSponsorshipVideos(obj: any): any {
             ) {
                 const videoRenderer = item.richItemRenderer.content.videoRenderer;
                 const title = getVideoTitle(videoRenderer);
-                //memberVideosLog(`[HYM] Removed members-only video: "%c${title}%c"`, 'color: white;', '');
+                //memberVideosLog(`Removed members-only video: "%c${title}%c"`, 'color: white;', '');
                 removedCount++;
                 remove = true;
             }
@@ -64,7 +64,7 @@ function filterSponsorshipVideos(obj: any): any {
             if (!remove && item && item.videoRenderer && isSponsorshipVideo(item.videoRenderer)) {
                 const videoRenderer = item.videoRenderer;
                 const title = getVideoTitle(videoRenderer);
-                //memberVideosLog(`[HYM] Removed members-only video: "%c${title}%c"`, 'color: white;', '');
+                //memberVideosLog(`Removed members-only video: "%c${title}%c"`, 'color: white;', '');
                 removedCount++;
                 remove = true;
             }
@@ -108,7 +108,7 @@ window.fetch = function(input: RequestInfo | URL, init?: RequestInit): Promise<R
 
                 // Log total removed in this fetch response, like the DOM method does
                 if (removedCount > 0) {
-                    memberVideosLog(`[HYM] Removed ${removedCount} members-only videos (Response-Interceptor method).`);
+                    memberVideosLog(`Removed ${removedCount} members-only videos (Response-Interceptor method).`);
                 }
 
                 return new Response(JSON.stringify(filteredData), {
@@ -122,4 +122,4 @@ window.fetch = function(input: RequestInfo | URL, init?: RequestInit): Promise<R
     return originalFetch(input, init);
 };
 
-memberVideosLog('[HYM] Sponsorship video fetch interceptor installed');
+memberVideosLog('Sponsorship video fetch interceptor installed');
