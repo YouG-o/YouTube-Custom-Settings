@@ -25,7 +25,7 @@
   },
 
   "tooltipVideoQuality": {
-    "message": "Встановіть вашу бажану якість відео або налаштуйте власні значення.",
+    "message": "Встановіть бажану якість відео або налаштуйте власні значення.",
     "description": "Tooltip explaining the video quality feature"
   },
 
@@ -35,7 +35,7 @@
   },
 
   "tooltipVideoSpeed": {
-    "message": "Виберіть ваше обмеження швидкості відео за замовчуванням",
+    "message": "Виберіть обмеження швидкості відео за замовчуванням",
     "description": "Tooltip explaining the video speed feature"
   },
 
@@ -45,7 +45,7 @@
   },
 
   "tooltipSubtitles": {
-    "message": "Відображає субтитри вашою бажаною мовою (якщо доступно). Якщо їх немає, субтитри будуть вимкнені. Автоматично згенеровані субтитри ігноруються.",
+    "message": "Відображає субтитри бажаною мовою (якщо доступно). Якщо їх немає, субтитри будуть вимкнені. Автоматично згенеровані субтитри ігноруються.",
     "description": "Tooltip explaining the subtitles feature"
   },
 
@@ -65,7 +65,7 @@
   },
 
   "tooltipVolume": {
-    "message": "Встановіть ваш рівень гучності за замовчуванням (у відсотках)",
+    "message": "Встановіть рівень гучності за замовчуванням (у відсотках)",
     "description": "Tooltip explaining the default volume feature"
   },
 
@@ -110,27 +110,27 @@
   },
 
   "featureDisableNumberShortcuts": {
-    "message": "Disable Player Number Shortcuts",
+    "message": "Вимкнути цифрові клавіші в плеєрі",
     "description": "Title for the disable number keyboard shortcuts feature"
   },
 
   "tooltipDisableNumberShortcuts": {
-    "message": "Prevents number keys (0-9) from changing the video playback position. Useful to avoid accidental seeks when working on another screen.",
+    "message": "Запобігає зміні позиції відтворення відео за допомогою цифрових клавіш (0-9). Корисно для запобігання випадковому перемиканню під час роботи на іншому екрані.",
     "description": "Tooltip for the disable number keyboard shortcuts feature"
   },
 
   "extraSettings": {
-    "message": "Extra Settings",
+    "message": "Додаткові налаштування",
     "description": "Title of the collapsible extra settings section"
   },
 
   "featureEnableLogs": {
-    "message": "Enable Logs",
+    "message": "Увімкнути журнали",
     "description": "Title of the enable logs feature"
   },
 
   "tooltipEnableLogs": {
-    "message": "Enable debug logs in the browser console. Useful for troubleshooting. Disabled by default.",
+    "message": "Увімкнути журнали налагодження в консолі браузера. Корисно для усунення несправностей. Вимкнено за замовчуванням.",
     "description": "Tooltip explaining the enable logs feature"
   },
 
@@ -395,7 +395,7 @@
   },
 
   "messageSupportText": {
-    "message": "Ваша підтримка робить цей проєкт можливим. Кожен внесок допомагає, Дякую!",
+    "message": "Ваша підтримка робить цей проєкт можливим. Кожен внесок допомагає, Дякую!💙💛",
     "description": "Support/donation message in footer"
   },
 
