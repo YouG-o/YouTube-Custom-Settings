@@ -7,16 +7,32 @@
  * This program is distributed without any warranty; see the license for details.
  */
 
-export interface CustomOrderSetting {
+export interface ToggleSetting {
     enabled: boolean;
-    order: string[];
 }
 
-export interface FeatureSetting<T> {
-    enabled: boolean;
+export interface FeatureSetting<T> extends ToggleSetting {
     value: T;
     customOrder?: CustomOrderSetting;
 }
+
+export interface VolumeSetting extends ToggleSetting {
+    value: number;
+}
+
+export interface AudioTrackSetting extends ToggleSetting {
+    language: string;
+}
+
+export interface SubtitlesPreferenceSetting extends FeatureSetting<string> {
+    asr: boolean;
+}
+
+export interface CustomOrderSetting extends ToggleSetting {
+    order: string[];
+}
+
+
 
 export interface SpeedSetting extends FeatureSetting<number> {
     applyToShorts: boolean;
@@ -39,31 +55,15 @@ export interface AudioNormalizerSetting extends FeatureSetting<string> {
 export interface ExtensionSettings {
     videoQuality: FeatureSetting<string>;
     videoSpeed: SpeedSetting;
-    subtitlesPreference: FeatureSetting<string>;
+    subtitlesPreference: SubtitlesPreferenceSetting;
     audioNormalizer: AudioNormalizerSetting;
-    volume: {
-        enabled: boolean;
-        value: number;
-    };
-    hideMembersOnlyVideos: {
-        enabled: boolean;
-    };
-    audioTrack: {
-        enabled: boolean;
-        language: string;
-    };
-    hideShorts: {
-        enabled: boolean;
-    };
-    preventShortsLoop: {
-        enabled: boolean;
-    };
-    disableNumberShortcuts: {
-        enabled: boolean;
-    };
-    enableLogs: {
-        enabled: boolean;
-    };
+    volume: VolumeSetting;
+    hideMembersOnlyVideos: ToggleSetting;
+    audioTrack: AudioTrackSetting;
+    hideShorts: ToggleSetting;
+    preventShortsLoop: ToggleSetting;
+    disableNumberShortcuts: ToggleSetting;
+    enableLogs: ToggleSetting;
 }
 
 export interface Message {

@@ -29,7 +29,8 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
     },
     subtitlesPreference: {
         enabled: false,
-        value: 'original'
+        value: 'original',
+        asr: false
     },
     audioNormalizer: {
         enabled: false,
