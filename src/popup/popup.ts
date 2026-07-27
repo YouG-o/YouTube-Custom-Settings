@@ -29,6 +29,7 @@ const videoSpeedContainer = document.getElementById('videoSpeedContainer') as HT
 const subtitlesToggle = document.getElementById('subtitlesTranslation') as HTMLInputElement;
 const subtitlesPreferenceSelect = document.getElementById('subtitlesLanguage') as HTMLSelectElement;
 const subtitlesPreferenceContainer = document.getElementById('subtitlesLanguageContainer') as HTMLDivElement;
+const subtitlesAsrToggle = document.getElementById('subtitlesAsr') as HTMLInputElement;
 
 const audioNormalizerFeature = document.getElementById('audioNormalizerFeature') as HTMLInputElement;
 const audioNormalizerSelect = document.getElementById('audioNormalizerValue') as HTMLSelectElement;
@@ -286,6 +287,7 @@ async function loadSettings() {
         subtitlesToggle.checked = settings.subtitlesPreference.enabled;
         subtitlesPreferenceSelect.value = settings.subtitlesPreference.value;
         toggleContainer(subtitlesPreferenceContainer, subtitlesToggle.checked);
+        subtitlesAsrToggle.checked = settings.subtitlesPreference.asr ?? false;
         
         // Audio normalizer settings
         if (settings.audioNormalizer) {
@@ -377,7 +379,8 @@ async function saveSettings() {
         },
         subtitlesPreference: {
             enabled: subtitlesToggle.checked,
-            value: subtitlesPreferenceSelect.value
+            value: subtitlesPreferenceSelect.value,
+            asr: subtitlesAsrToggle.checked
         },
         audioNormalizer: {
             enabled: audioNormalizerFeature.checked,
@@ -480,6 +483,8 @@ function initEventListeners() {
         toggleContainer(subtitlesPreferenceContainer, subtitlesToggle.checked);
         saveSettings();
     });
+
+    subtitlesAsrToggle.addEventListener('change', saveSettings);
     
     audioNormalizerFeature.addEventListener('change', () => {
         toggleContainer(audioNormalizerContainer, audioNormalizerFeature.checked);
