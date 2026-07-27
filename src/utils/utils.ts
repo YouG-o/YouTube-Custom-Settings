@@ -17,12 +17,18 @@ import { handleAudioTrack } from "../content/audioTrack/AudioTrack";
 import { handleDisableNumberShortcuts } from "../content/disableNumberShortcuts/DisableNumberShortcuts";
 
 
-export function applyVideoPlayerSettings(): void {
+function applyVideoPlayerSettings(): void {
     currentSettings?.videoQuality.enabled && handleVideoQuality();
     currentSettings?.videoSpeed.enabled && handleVideoSpeed();
-    currentSettings?.subtitlesPreference.enabled && handleSubtitlesPreference();
     currentSettings?.audioNormalizer.enabled && handleAudioNormalizer();
     currentSettings?.volume.enabled && handleVolume();
     currentSettings?.audioTrack.enabled && handleAudioTrack();
     handleDisableNumberShortcuts();
 }
+
+function applySubtitlesPreference(): void {
+    currentSettings?.subtitlesPreference.enabled && handleSubtitlesPreference();
+}
+
+export { applyVideoPlayerSettings, applySubtitlesPreference };
+    

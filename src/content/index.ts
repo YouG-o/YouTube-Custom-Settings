@@ -39,7 +39,7 @@ async function initializeFeatures() {
     currentSettings = await loadExtensionSettings();
 
     // Apply settings
-    applyStoredSettings();
+    //applyStoredSettings();
 
     initializeVideoPlayerListener();
 
