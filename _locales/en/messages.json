@@ -48,6 +48,14 @@
     "message": "Display subtitles in your preferred language if available. If not, subtitles will be disabled. Auto generated subtitles are ignored.",
     "description": "Tooltip explaining the subtitles feature"
   },
+  "labelSubtitlesAsr": {
+    "message": "Use automatic captions as fallback",
+    "description": "Label for the ASR fallback toggle in subtitles settings"
+  },
+  "tooltipSubtitlesAsr": {
+      "message": "If no manual subtitles track exists in the target language, use YouTube's auto-generated (ASR) captions instead of disabling subtitles.",
+      "description": "Tooltip for the ASR fallback toggle in subtitles settings"
+  },
 
   "featureAudioNormalizer": {
     "message": "Normalize Audio",

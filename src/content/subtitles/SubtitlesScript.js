@@ -19,13 +19,13 @@
  * Handles YouTube's subtitles selection to force original language
  * 
  * YouTube provides different types of subtitle tracks:
+ * - Manual tracks: Can be original language or translated
  * - ASR (Automatic Speech Recognition) tracks: Always in original video language
- * - Manual tracks: Can be original or translated
- * - Translated tracks: Generated from manual tracks
+ * - Translated tracks: Generated from ASR track
  * 
- * Strategy:
+ * Strategy to get original subtitles track:
  * 1. Find ASR track to determine original video language
- * 2. Look for manual track in same language
+ * 2. Look for manual track in same language (matching base language code)
  * 3. Apply original language track if found
  */
 
@@ -36,7 +36,7 @@
     const LOG_COLOR = '#FF9800';  // Orange
     const ERROR_COLOR = '#F44336';  // Red
 
-    // Simplified logger functions
+    // devLog not implemented yet in YCS: logs always shown for now
     function log(message, ...args) {
         console.log(
             `%c${LOG_PREFIX}${LOG_CONTEXT} ${message}`,
@@ -48,179 +48,85 @@
     function errorLog(message, ...args) {
         console.log(
             `%c${LOG_PREFIX}${LOG_CONTEXT} %c${message}`,
-            `color: ${LOG_COLOR}`,  // Keep context color for prefix
-            `color: ${ERROR_COLOR}`,  // Red color for error message
+            `color: ${LOG_COLOR}`,
+            `color: ${ERROR_COLOR}`,
             ...args
         );
     }
 
-    // Retry counter for setPreferredSubtitles internal logic
-    let preferredSubtitlesRetryCount = 0; 
-    const SET_PREFERRED_SUBTITLES_MAX_RETRIES = 5; 
-
-    // Retry counter for finding the player element
-    let playerPollRetryCount = 0;
-    const MAX_PLAYER_POLL_RETRIES = 25; // Approx 5 seconds (25 * 200ms)
-
-    // Flag to ensure the main settings application logic is initiated only once per script execution instance
-    let settingsAttemptOrchestrationInitiated = false;
+    /**
+     * Extracts the base language code from a language code
+     * Examples: "en-US" -> "en", "fr-CA" -> "fr", "en" -> "en"
+     */
+    function getBaseLanguageCode(languageCode) {
+        return languageCode ? languageCode.split('-')[0] : '';
+    }
 
     /**
-     * Orchestrates the player readiness checks before applying subtitle settings.
-     * Waits for the player API to be ready and the player to be in an active state.
+     * Checks if two language codes match (comparing base language codes)
      */
-    function orchestratePlayerReadiness() {
+    function languageCodesMatch(code1, code2) {
+        return getBaseLanguageCode(code1) === getBaseLanguageCode(code2);
+    }
+
+    let retryCount = 0;
+    const MAX_RETRIES = 5;
+
+    function setPreferredSubtitles() {
         // Try to get the specified player
         let targetId = 'movie_player'; // player for regular videos
         if (window.location.pathname.startsWith('/shorts')) {
             targetId = 'shorts-player'; // player for shorts
         } else if (window.location.pathname.startsWith('/@')) {
             targetId = 'c4-player'; // player for channels main video
-        } 
-        const player = document.getElementById(targetId);
-
-        // Poll for the player element if not found immediately or its essential API methods are not ready
-        if (!player || typeof player.getPlayerState !== 'function' || typeof player.addEventListener !== 'function') {
-            playerPollRetryCount++;
-            if (playerPollRetryCount <= MAX_PLAYER_POLL_RETRIES) {
-                // log(`Player element or base API not ready, retrying poll (${playerPollRetryCount}/${MAX_PLAYER_POLL_RETRIES})`);
-                setTimeout(orchestratePlayerReadiness, 200);
-            } else {
-                errorLog('Player element or base API not found after multiple retries. Cannot configure subtitles.');
-            }
-            return;
-        }
-        
-        playerPollRetryCount = 0; // Reset poll counter for any future distinct script executions
-
-        // If this specific script instance has already started the API/state waiting process, don't restart it.
-        if (settingsAttemptOrchestrationInitiated) {
-            // log('Subtitle settings orchestration already initiated by this script instance.');
-            return;
         }
 
-        /**
-         * Called once the Player API is confirmed ready and the player is in an active state.
-         * This function then calls setPreferredSubtitles.
-         */
-        const onPlayerReadyAndActive = () => {
-            // Double check the flag to ensure this final step is only done once per instance.
-            if (!settingsAttemptOrchestrationInitiated) {
-                settingsAttemptOrchestrationInitiated = true; // Mark that we are now initiating the actual settings application.
-                //log('Player API ready and player active. Initiating setPreferredSubtitles.');
-                preferredSubtitlesRetryCount = 0; // Reset retry count for a fresh series of attempts by setPreferredSubtitles.
-                setPreferredSubtitles(); // Call the function that contains the core logic.
-            }
-        };
-        
-        /**
-         * Called once the Player API is confirmed ready.
-         * It then checks if the player is in an active state or waits for it.
-         */
-        const proceedWhenPlayerActive = () => {
-            const currentPlayerState = player.getPlayerState();
-            // Player states: -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (video cued)
-            const isActiveState = currentPlayerState === 1 || // YT.PlayerState.PLAYING
-                                  currentPlayerState === 3 || // YT.PlayerState.BUFFERING
-                                  (currentPlayerState === 2 && player.getCurrentTime() > 0.1); // YT.PlayerState.PAUSED but has played
-
-            if (isActiveState) {
-                // log(`Player API ready, and player is already in an active state (${currentPlayerState}).`);
-                onPlayerReadyAndActive();
-            } else {
-                // log(`Player API ready, but player not in active state (${currentPlayerState}). Waiting for onStateChange.`);
-                let stateChangeHandlerAttached = false;
-                let stateChangeFallbackTimeoutId = null;
-
-                const stateChangeHandler = (event) => {
-                    const newState = event.data; // New player state
-                    if (newState === 1 || newState === 3) { // YT.PlayerState.PLAYING or YT.PlayerState.BUFFERING
-                        if (stateChangeFallbackTimeoutId) clearTimeout(stateChangeFallbackTimeoutId);
-                        player.removeEventListener('onStateChange', stateChangeHandler);
-                        stateChangeHandlerAttached = false;
-                        onPlayerReadyAndActive();
-                    }
-                };
-
-                player.addEventListener('onStateChange', stateChangeHandler);
-                stateChangeHandlerAttached = true;
-
-                // Fallback timeout if onStateChange doesn't lead to an active state quickly.
-                stateChangeFallbackTimeoutId = setTimeout(() => {
-                    if (stateChangeHandlerAttached) { // Check if listener is still active
-                        // log('Timeout waiting for player to reach an active state via onStateChange. Attempting anyway.');
-                        player.removeEventListener('onStateChange', stateChangeHandler);
-                        onPlayerReadyAndActive(); // Attempt to apply settings anyway.
-                    }
-                }, 7000); // 7 seconds fallback.
-            }
-        };
-
-        // Main orchestration logic starts here: wait for onApiChange first.
-        let apiChangeListenerAttached = false;
-        const apiChangeHandler = () => {
-            // log('onApiChange event fired. Player API should be fully ready.');
-            if (apiChangeFallbackTimeoutId) clearTimeout(apiChangeFallbackTimeoutId);
-            player.removeEventListener('onApiChange', apiChangeHandler);
-            apiChangeListenerAttached = false;
-            proceedWhenPlayerActive(); // Now that API is ready, check player state.
-        };
-        
-        player.addEventListener('onApiChange', apiChangeHandler);
-        apiChangeListenerAttached = true;
-
-        // Fallback if onApiChange doesn't fire (e.g., if API was already fully loaded before listener was attached).
-        const apiChangeFallbackTimeoutId = setTimeout(() => {
-            if (apiChangeListenerAttached) { // If listener is still there, onApiChange hasn't fired.
-                // log('onApiChange event did not fire within timeout. Assuming API is ready/loaded and proceeding.');
-                player.removeEventListener('onApiChange', apiChangeHandler);
-                apiChangeListenerAttached = false;
-                if (!settingsAttemptOrchestrationInitiated) {
-                    proceedWhenPlayerActive();
-                }
-            }
-        }, 3000); // 3 seconds for onApiChange to fire.
-    }
-
-    // ...existing code... // This comment indicates that your existing setPreferredSubtitles function starts below
-    function setPreferredSubtitles() {
-        // Try to get the specified player
-        let targetId = 'movie_player';
-        if (window.location.pathname.startsWith('/shorts')) {
-            targetId = 'shorts-player';
-        } else if (window.location.pathname.startsWith('/@')) {
-            targetId = 'c4-player'; // player for channels main video
-        } 
         const player = document.getElementById(targetId);
         if (!player) return false;
 
-        // Read from YCS_SETTINGS
-        const raw = localStorage.getItem('YCS_SETTINGS');
-        const ycsSettings = raw ? JSON.parse(raw) : {};
-        const subtitlesLanguage = ycsSettings.subtitlesPreference?.value || 'original';
-        //log(`Using preferred language: ${subtitlesLanguage}`);
-
-        // Check if subtitles are disabled
-        if (subtitlesLanguage === 'disabled') {
-            log('Subtitles are disabled, disabling subtitles');
-            player.setOption('captions', 'track', {});
-            return true;
-        }
-
         try {
+            // Read from YCS_SETTINGS
+            const raw = localStorage.getItem('YCS_SETTINGS');
+            const ycsSettings = raw ? JSON.parse(raw) : {};
+            const subtitlesLanguage = ycsSettings.subtitlesPreference?.value || 'original';
+            const asrEnabled = ycsSettings.subtitlesPreference?.asr === true;
+
+            // Get current active track
+            const currentTrack = player.getOption('captions', 'track');
+
+            // Check if subtitles are disabled
+            if (subtitlesLanguage === 'disabled') {
+                // Skip if already disabled (empty track)
+                if (!currentTrack || !currentTrack.languageCode) {
+                    log('Subtitles are already disabled');
+                    return true;
+                }
+                log('Subtitles are disabled, disabling subtitles');
+                player.setOption('captions', 'track', {});
+                return true;
+            }
+
             // Get video response to access caption tracks
             const response = player.getPlayerResponse();
             const captionTracks = response.captions?.playerCaptionsTracklistRenderer?.captionTracks;
-            if (!captionTracks) return false;
+
+            if (!captionTracks) {
+                throw new Error('Caption tracks not available');
+            }
 
             // If preference is "original", look for original language
             if (subtitlesLanguage === 'original') {
-                // Find ASR track to determine original video language
                 const asrTrack = captionTracks.find(track => track.kind === 'asr');
+
                 if (!asrTrack) {
                     // Fallback: if there's only one subtitle track, assume it's the original
                     if (captionTracks.length === 1) {
                         const singleTrack = captionTracks[0];
+                        // Skip if already on this track
+                        if (currentTrack && languageCodesMatch(currentTrack.languageCode, singleTrack.languageCode) && !currentTrack.kind && !currentTrack.translationLanguage) {
+                            log(`Subtitles already set to original (manual): "${singleTrack.name.simpleText}" [${singleTrack.languageCode}]`);
+                            return true;
+                        }
                         log(`Only subtitle track found is manual, assuming it's original: "${singleTrack.name.simpleText}" [${singleTrack.languageCode}]`);
                         player.setOption('captions', 'track', singleTrack);
                         return true;
@@ -232,56 +138,129 @@
                 }
 
                 // Find manual track in original language
-                const originalTrack = captionTracks.find(track => 
-                    track.languageCode === asrTrack.languageCode && !track.kind
+                const originalTrack = captionTracks.find(track =>
+                    languageCodesMatch(track.languageCode, asrTrack.languageCode) && !track.kind
                 );
 
-                // If no manual track in original language exists
-                if (!originalTrack) {
-                    log('No manual track in original language, disabling subtitles');
+                if (originalTrack) {
+                    // Skip if already on this track
+                    if (currentTrack && languageCodesMatch(currentTrack.languageCode, originalTrack.languageCode) && !currentTrack.kind && !currentTrack.translationLanguage) {
+                        log(`Subtitles already set to original language (manual): "${originalTrack.name.simpleText}" [${originalTrack.languageCode}]`);
+                        return true;
+                    }
+                    log(`Setting subtitles to original language (manual): "${originalTrack.name.simpleText}" [${originalTrack.languageCode}]`);
+                    player.setOption('captions', 'track', originalTrack);
+                    return true;
+                }
+
+                if (!asrEnabled) {
+                    log('No manual track in original language, disabling subtitles (ASR disabled)');
                     player.setOption('captions', 'track', {});
                     return true;
                 }
 
-                log(`Setting subtitles to original language: "${originalTrack.name.simpleText}"`);
-                player.setOption('captions', 'track', originalTrack);
+                // Skip if already on ASR track
+                if (
+                    currentTrack &&
+                    languageCodesMatch(currentTrack.languageCode, asrTrack.languageCode) &&
+                    currentTrack.kind === 'asr' &&
+                    !currentTrack.translationLanguage
+                ) {
+                    log(`Subtitles already set to ASR: "${asrTrack.name.simpleText}"`);
+                    return true;
+                }
+
+                log(`Using original ASR track: "${asrTrack.name.simpleText}"`);
+                player.setOption('captions', 'track', asrTrack);
                 return true;
-            } 
-            
-            // For specific language preference, search for matching track
-            const languageTrack = captionTracks.find(track => 
-                track.languageCode === subtitlesLanguage && !track.kind
+            }
+
+            // For specific language preference
+            const languageTrack = captionTracks.find(track =>
+                languageCodesMatch(track.languageCode, subtitlesLanguage) && !track.kind
             );
-            
+
             if (languageTrack) {
-                log(`Setting subtitles to selected language: "${languageTrack.name.simpleText}"`);
+                // Skip if already on this track
+                if (currentTrack && languageCodesMatch(currentTrack.languageCode, subtitlesLanguage) && !currentTrack.kind && !currentTrack.translationLanguage) {
+                    log(`Subtitles already set to selected language: "${languageTrack.name.simpleText}" [${languageTrack.languageCode}]`);
+                    return true;
+                }
+                log(`Setting subtitles to selected language: "${languageTrack.name.simpleText}" [${languageTrack.languageCode}]`);
                 player.setOption('captions', 'track', languageTrack);
                 return true;
-            } else {
-                log(`Selected language "${subtitlesLanguage}" not available, disabling subtitles`);
+            }
+
+            if (!asrEnabled) {
+                log(`Selected language "${subtitlesLanguage}" not available, disabling subtitles (ASR disabled)`);
                 player.setOption('captions', 'track', {});
                 return true;
             }
+
+            const asrTrack = captionTracks.find(track => track.kind === 'asr');
+            if (!asrTrack) {
+                log(`Selected language "${subtitlesLanguage}" not available and no ASR track found, disabling subtitles`);
+                player.setOption('captions', 'track', {});
+                return true;
+            }
+
+            if (languageCodesMatch(asrTrack.languageCode, subtitlesLanguage)) {
+                // Skip if already on this ASR track
+                if (
+                    currentTrack &&
+                    languageCodesMatch(currentTrack.languageCode, subtitlesLanguage) &&
+                    currentTrack.kind === 'asr' &&
+                    !currentTrack.translationLanguage
+                ) {
+                    log(`Subtitles already set to ASR track in target language: "${asrTrack.name.simpleText}"`);
+                    return true;
+                }
+                log(`Using ASR track in target language: "${asrTrack.name.simpleText}"`);
+                player.setOption('captions', 'track', asrTrack);
+                return true;
+            }
+
+            log(`Attempting ASR translation from "${asrTrack.languageCode}" to "${subtitlesLanguage}"`);
+
+            // Check if the translated ASR track is already active
+            // This handles cases like "English (auto-generated) >> French" being active
+            if (currentTrack && currentTrack.kind === 'asr' && currentTrack.translationLanguage && languageCodesMatch(currentTrack.translationLanguage.languageCode, subtitlesLanguage)) {
+                log(`Subtitles already set to translated ASR track: "${asrTrack.name.simpleText}" translated to "${subtitlesLanguage}"`);
+                return true;
+            }
+
+            const translatedTrack = {
+                ...asrTrack,
+                translationLanguage: {
+                    languageCode: subtitlesLanguage,
+                    languageName: subtitlesLanguage
+                }
+            };
+
+            player.setOption('captions', 'track', translatedTrack);
+            return true;
+
         } catch (error) {
-            //errorLog(`${error.name}: ${error.message}`);
-            // Implement fallback mechanism with progressive delay
-            if (preferredSubtitlesRetryCount < SET_PREFERRED_SUBTITLES_MAX_RETRIES) { 
-                preferredSubtitlesRetryCount++; 
-                const delay = 50 * preferredSubtitlesRetryCount; 
-                //log(`Retrying in ${delay}ms (attempt ${preferredSubtitlesRetryCount}/${SET_PREFERRED_SUBTITLES_MAX_RETRIES})...`);
-                
+            if (error.message !== 'Caption tracks not available') {
+                errorLog(`Error in setPreferredSubtitles: ${error.name}: ${error.message}`);
+            }
+
+            // Simple retry
+            if (retryCount < MAX_RETRIES) {
+                retryCount++;
+                const delay = 200 * retryCount;
+
                 setTimeout(() => {
                     setPreferredSubtitles();
                 }, delay);
             } else {
-                //errorLog(`Failed after ${SET_PREFERRED_SUBTITLES_MAX_RETRIES} retries`);
-                preferredSubtitlesRetryCount = 0; 
+                errorLog(`Failed after ${MAX_RETRIES} retries`);
+                retryCount = 0;
             }
-            
+
             return false;
         }
     }
 
-    // Execute the orchestration logic when the script is injected
-    orchestratePlayerReadiness();
+    setPreferredSubtitles();
 })();
