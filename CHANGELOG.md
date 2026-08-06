@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Display adjusted video duration in the player when custom video speed is enabled.
+
 ## [1.13.2] - 2026-04-15
 
 ### Fixed
