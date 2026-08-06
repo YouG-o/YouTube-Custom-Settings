@@ -161,18 +161,18 @@
             const player = document.getElementById(targetId);
             
             if (!player || typeof player.setPlaybackRate !== 'function') {
-                // Fallback to direct video element manipulation if player API is not available
                 const video = document.querySelector('video');
                 if (!video) {
                     errorLog('Video element not found');
                     return false;
                 }
-                
+
                 video.playbackRate = preferredSpeed;
                 log('Playback speed set to (via HTML5 video element):', preferredSpeed);
+                updateAdjustedDurationDisplay(preferredSpeed);
                 return true;
             }
-            
+
             // Check duration rule before applying speed
             const ruleEnabled = videoSpeed.durationRuleEnabled === true;
             if (ruleEnabled) {
@@ -196,11 +196,94 @@
             // Use YouTube player API to set playback rate for normal speeds
             player.setPlaybackRate(preferredSpeed);
             log('Playback speed set to (via YouTube player API):', preferredSpeed);
+            updateAdjustedDurationDisplay(preferredSpeed);
             return true;
         } catch (error) {
             errorLog(`Failed to set playback speed: ${error.message}`);
             return false;
         }
+    }
+
+    function formatTime(seconds) {
+        const total = Math.max(0, Math.round(seconds));
+        const hours = Math.floor(total / 3600);
+        const minutes = Math.floor((total % 3600) / 60);
+        const secs = total % 60;
+
+        if (hours > 0) {
+            return `${hours}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+        return `${minutes}:${String(secs).padStart(2, '0')}`;
+    }
+
+    function getVideoDurationSeconds() {
+        const video = document.querySelector('video');
+        if (video && Number.isFinite(video.duration) && video.duration > 0) {
+            return video.duration;
+        }
+
+        const player = document.getElementById('movie_player') || document.getElementById('shorts-player') || document.getElementById('c4-player');
+        if (player && typeof player.getDuration === 'function') {
+            const duration = player.getDuration();
+            if (Number.isFinite(duration) && duration > 0) {
+                return duration;
+            }
+        }
+
+        return NaN;
+    }
+
+    function getDurationElement() {
+        return document.querySelector('.ytp-time-duration');
+    }
+
+    function createAdjustedDurationBadge() {
+        const durationElement = getDurationElement();
+        if (!durationElement) return null;
+
+        const existingBadges = Array.from(document.querySelectorAll('#ycs-adjusted-duration'));
+        const badge = existingBadges.shift() || null;
+
+        existingBadges.forEach((extraBadge) => extraBadge.remove());
+
+        if (badge) {
+            return badge;
+        }
+
+        const newBadge = document.createElement('span');
+        newBadge.id = 'ycs-adjusted-duration';
+        newBadge.style.display = 'inline-block';
+        newBadge.style.marginLeft = '0.25rem';
+        newBadge.style.color = '#ccc';
+        newBadge.style.fontSize = '0.9em';
+        newBadge.style.userSelect = 'none';
+        newBadge.style.pointerEvents = 'none';
+        durationElement.insertAdjacentElement('afterend', newBadge);
+        return newBadge;
+    }
+
+    function updateAdjustedDurationDisplay(speed, attempt = 0) {
+        const badge = createAdjustedDurationBadge();
+        if (!badge) {
+            if (attempt < 5) {
+                setTimeout(() => updateAdjustedDurationDisplay(speed, attempt + 1), 200);
+            }
+            return;
+        }
+
+        if (speed === 1) {
+            badge.textContent = '';
+            return;
+        }
+
+        const durationSeconds = getVideoDurationSeconds();
+        if (!Number.isFinite(durationSeconds) || durationSeconds <= 0) {
+            badge.textContent = '';
+            return;
+        }
+
+        const adjustedSeconds = durationSeconds / speed;
+        badge.textContent = `(${formatTime(adjustedSeconds)})`;
     }
 
     // Execute immediately when script is injected
