@@ -10,6 +10,15 @@
     const LOG_CONTEXT = '[VIDEO SPEED]';
     const LOG_COLOR = '#fca5a5';  // Light red
     const ERROR_COLOR = '#F44336';  // Red
+    const MUSIC_DETECTION_MAX_ATTEMPTS = 60;
+    const MUSIC_DETECTION_RETRY_MS = 250;
+    const EXPLICIT_MUSIC_VIDEO_TYPES = new Set([
+        'MUSIC_VIDEO_TYPE_ATV',
+        'MUSIC_VIDEO_TYPE_OFFICIAL_SOURCE_MUSIC',
+        'MUSIC_VIDEO_TYPE_OMV',
+        'MUSIC_VIDEO_TYPE_UGC'
+    ]);
+    const OFFICIAL_ARTIST_BADGE_PATH_PREFIX = 'M9.03 2.242 8.272 3H7.2A4.2';
 
     // Simplified logger functions
     function log(message, ...args) {
@@ -69,6 +78,64 @@
         }
     }
 
+    // YouTube exposes music classification in the player response. Using this
+    // metadata avoids unreliable title, description, or channel-name heuristics.
+    function getMusicVideoStatus() {
+        try {
+            const pathVideoId = window.location.pathname.startsWith('/shorts/')
+                ? window.location.pathname.split('/')[2]
+                : new URLSearchParams(window.location.search).get('v');
+            const player = document.getElementById('movie_player') ||
+                document.getElementById('shorts-player') ||
+                document.getElementById('c4-player');
+            const playerResponse = player && typeof player.getPlayerResponse === 'function'
+                ? player.getPlayerResponse()
+                : null;
+
+            if (playerResponse?.videoDetails) {
+                if (pathVideoId && playerResponse.videoDetails.videoId !== pathVideoId) {
+                    return null;
+                }
+
+                const musicVideoType = playerResponse.videoDetails.musicVideoType;
+                if (EXPLICIT_MUSIC_VIDEO_TYPES.has(musicVideoType)) return true;
+            }
+
+            const pageVideoId = document.querySelector('meta[itemprop="identifier"]')?.content;
+            if (pathVideoId && pageVideoId && pageVideoId !== pathVideoId) return null;
+
+            const category = playerResponse?.microformat?.playerMicroformatRenderer?.category ||
+                document.querySelector('meta[itemprop="genre"]')?.content;
+            if (!category) return null;
+            if (typeof category !== 'string' || category.toLowerCase() !== 'music') {
+                return false;
+            }
+
+            const pageAuthor = document.querySelector('[itemprop="author"] [itemprop="name"]')
+                ?.getAttribute('content') || '';
+            const author = playerResponse?.videoDetails?.author || pageAuthor;
+            if (/\s-\sTopic$/i.test(author)) return true;
+
+            const owner = document.querySelector('#owner ytd-video-owner-renderer, ytd-video-owner-renderer');
+            if (!owner) return null;
+
+            const ownerAuthor = owner.querySelector('#channel-name #text')?.getAttribute('title') ||
+                owner.querySelector('#channel-name')?.textContent?.trim() || '';
+            if (pageAuthor && ownerAuthor && pageAuthor !== ownerAuthor) return null;
+
+            return Array.from(owner.querySelectorAll('ytd-badge-supported-renderer')).some((badge) => {
+                const badgeData = badge.data?.metadataBadgeRenderer || badge.data;
+                return badgeData?.icon?.iconType === 'AUDIO_BADGE' ||
+                    Array.from(badge.querySelectorAll('svg path')).some((path) =>
+                        path.getAttribute('d')?.startsWith(OFFICIAL_ARTIST_BADGE_PATH_PREFIX)
+                    );
+            });
+        } catch (error) {
+            errorLog(`Error checking if video is music: ${error.message}`);
+            return null;
+        }
+    }
+
     function shouldApplySpeed() {
         // Read from YCS_SETTINGS
         const raw = localStorage.getItem('YCS_SETTINGS');
@@ -97,7 +164,7 @@
         return true;
     }
 
-    function setPlaybackSpeed() {
+    function setPlaybackSpeed(musicDetectionAttempt = 0) {
         try {
             // Don't apply speed changes to live streams
             if (isLiveStream()) {
@@ -112,6 +179,26 @@
             
             const speedEnabled = videoSpeed.enabled === true;
             if (!speedEnabled) return false;
+
+            if (videoSpeed.applyToMusicVideos !== true) {
+                const musicVideoStatus = getMusicVideoStatus();
+                if (musicVideoStatus === null && musicDetectionAttempt < MUSIC_DETECTION_MAX_ATTEMPTS) {
+                    const video = document.querySelector('video');
+                    if (video) video.playbackRate = 1;
+                    setTimeout(
+                        () => setPlaybackSpeed(musicDetectionAttempt + 1),
+                        MUSIC_DETECTION_RETRY_MS
+                    );
+                    return false;
+                }
+                if (musicVideoStatus === true) {
+                    const video = document.querySelector('video');
+                    if (video) video.playbackRate = 1;
+                    log('Music video detected, using normal speed');
+                    updateAdjustedDurationDisplay(1);
+                    return true;
+                }
+            }
 
             const preferredSpeed = videoSpeed.value || 1;
             

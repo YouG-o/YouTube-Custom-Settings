@@ -36,6 +36,7 @@ export interface CustomOrderSetting extends ToggleSetting {
 
 export interface SpeedSetting extends FeatureSetting<number> {
     applyToShorts: boolean;
+    applyToMusicVideos: boolean;
     durationRuleEnabled?: boolean;
     durationRuleType?: 'greater' | 'less';
     durationRuleMinutes?: number;

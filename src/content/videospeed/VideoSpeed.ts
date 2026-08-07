@@ -92,6 +92,10 @@ browser.runtime.onMessage.addListener((message: unknown) => {
         if ('applyToShorts' in message && typeof message.applyToShorts === 'boolean') {
             ycsSettings.videoSpeed.applyToShorts = message.applyToShorts;
         }
+
+        if ('applyToMusicVideos' in message && typeof message.applyToMusicVideos === 'boolean') {
+            ycsSettings.videoSpeed.applyToMusicVideos = message.applyToMusicVideos;
+        }
         
         // Write back
         localStorage.setItem('YCS_SETTINGS', JSON.stringify(ycsSettings));

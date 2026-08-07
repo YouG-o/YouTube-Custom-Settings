@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add a video-speed toggle for applying custom speed to music videos.
 
 ## [1.14.0] - 2026-08-06
 

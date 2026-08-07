@@ -274,6 +274,16 @@
     "description": "Tooltip explaining the apply to Shorts toggle"
   },
 
+  "labelApplyToMusicVideos": {
+    "message": "Appliquer aux vidéos musicales",
+    "description": "Libellé de l'option permettant d'appliquer la vitesse personnalisée aux vidéos musicales"
+  },
+
+  "tooltipApplyToMusicVideos": {
+    "message": "Si cette option est désactivée, les vidéos classées comme musique par YouTube seront toujours lues à vitesse normale (x1).",
+    "description": "Infobulle expliquant l'option Appliquer aux vidéos musicales"
+  },
+
   "labelDontApplyToVideos": {
     "message": "Ne pas appliquer aux vidéos",
     "description": "Label for duration rule to exclude certain videos from speed setting"

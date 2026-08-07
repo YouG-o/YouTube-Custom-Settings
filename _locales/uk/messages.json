@@ -274,6 +274,16 @@
     "description": "Tooltip explaining the apply to Shorts toggle"
   },
 
+  "labelApplyToMusicVideos": {
+    "message": "Застосовувати до музичних відео",
+    "description": "Підпис перемикача застосування спеціальної швидкості до музичних відео"
+  },
+
+  "tooltipApplyToMusicVideos": {
+    "message": "Якщо вимкнено, відео, які YouTube класифікує як музичні, завжди відтворюватимуться зі звичайною швидкістю (x1).",
+    "description": "Підказка для перемикача застосування до музичних відео"
+  },
+
   "labelDontApplyToVideos": {
     "message": "Не застосовувати до відео",
     "description": "Label for duration rule to exclude certain videos from speed setting"

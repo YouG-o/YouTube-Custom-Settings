@@ -23,6 +23,7 @@ export const DEFAULT_SETTINGS: ExtensionSettings = {
         enabled: false,
         value: 1,
         applyToShorts: true,
+        applyToMusicVideos: false,
         durationRuleEnabled: false,
         durationRuleType: 'less',
         durationRuleMinutes: 5

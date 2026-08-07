@@ -282,6 +282,16 @@
     "description": "Tooltip explaining the apply to Shorts toggle"
   },
 
+  "labelApplyToMusicVideos": {
+    "message": "Apply to music videos",
+    "description": "Label for toggle to apply custom playback speed to music videos"
+  },
+
+  "tooltipApplyToMusicVideos": {
+    "message": "If disabled, videos classified as Music by YouTube will always play at normal speed (x1).",
+    "description": "Tooltip explaining the apply to music videos toggle"
+  },
+
   "labelDontApplyToVideos": {
     "message": "Don't apply to videos",
     "description": "Label for duration rule to exclude certain videos from speed setting"

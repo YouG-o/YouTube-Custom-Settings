@@ -53,6 +53,7 @@ const customRatio = document.getElementById('customRatio') as HTMLInputElement;
 const customAttack = document.getElementById('customAttack') as HTMLInputElement;
 const customRelease = document.getElementById('customRelease') as HTMLInputElement;
 const applyShortsSpeed = document.getElementById('applyShortsSpeed') as HTMLInputElement;
+const applyMusicVideosSpeed = document.getElementById('applyMusicVideosSpeed') as HTMLInputElement;
 const extensionVersionElement = document.getElementById('extensionVersion') as HTMLSpanElement; // Add this line
 
 const hideMembersOnlyVideosFeature = document.getElementById('hideMembersOnlyVideosFeature') as HTMLInputElement;
@@ -283,6 +284,7 @@ async function loadSettings() {
         videoSpeedSelect.value = String(settings.videoSpeed.value);
         toggleContainer(videoSpeedContainer, videoSpeedFeature.checked);
         applyShortsSpeed.checked = settings.videoSpeed.applyToShorts !== false;
+        applyMusicVideosSpeed.checked = settings.videoSpeed.applyToMusicVideos !== false;
         
         subtitlesToggle.checked = settings.subtitlesPreference.enabled;
         subtitlesPreferenceSelect.value = settings.subtitlesPreference.value;
@@ -373,6 +375,7 @@ async function saveSettings() {
             enabled: videoSpeedFeature.checked,
             value: parseFloat(videoSpeedSelect.value),
             applyToShorts: applyShortsSpeed.checked,
+            applyToMusicVideos: applyMusicVideosSpeed.checked,
             durationRuleEnabled: durationRuleEnabled.checked,
             durationRuleType: durationRuleType.value as 'greater' | 'less',
             durationRuleMinutes: parseInt(durationRuleMinutes.value, 10)
@@ -531,6 +534,7 @@ function initEventListeners() {
     
     // Add listener for the checkbox itself as well
     applyShortsSpeed.addEventListener('change', saveSettings);
+    applyMusicVideosSpeed.addEventListener('change', saveSettings);
     
     // Manual activation toggle
     audioNormalizerManual.addEventListener('change', saveSettings);
