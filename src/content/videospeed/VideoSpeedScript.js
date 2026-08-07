@@ -124,13 +124,18 @@
                 owner.querySelector('#channel-name')?.textContent?.trim() || '';
             if (pageAuthor && ownerAuthor && pageAuthor !== ownerAuthor) return null;
 
-            return Array.from(owner.querySelectorAll('ytd-badge-supported-renderer')).some((badge) => {
+            const hasOfficialArtistBadge = Array.from(owner.querySelectorAll('ytd-badge-supported-renderer')).some((badge) => {
                 const badgeData = badge.data?.metadataBadgeRenderer || badge.data;
                 return badgeData?.icon?.iconType === 'AUDIO_BADGE' ||
                     Array.from(badge.querySelectorAll('svg path')).some((path) =>
                         path.getAttribute('d')?.startsWith(OFFICIAL_ARTIST_BADGE_PATH_PREFIX)
                     );
             });
+
+            // Owner renderer often appears before its badges. Treat missing badge
+            // as pending on Music pages so early injection cannot misclassify an
+            // official music video as a regular video.
+            return hasOfficialArtistBadge ? true : null;
         } catch (error) {
             errorLog(`Error checking if video is music: ${error.message}`);
             return null;
