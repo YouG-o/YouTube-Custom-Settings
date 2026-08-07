@@ -19,7 +19,8 @@ import { handleDisableNumberShortcuts } from "../content/disableNumberShortcuts/
 
 function applyVideoPlayerSettings(): void {
     currentSettings?.videoQuality.enabled && handleVideoQuality();
-    currentSettings?.videoSpeed.enabled && handleVideoSpeed();
+    // Run even when disabled so navigation can clear page-context speed state.
+    handleVideoSpeed();
     currentSettings?.audioNormalizer.enabled && handleAudioNormalizer();
     currentSettings?.volume.enabled && handleVolume();
     currentSettings?.audioTrack.enabled && handleAudioTrack();
@@ -31,4 +32,3 @@ function applySubtitlesPreference(): void {
 }
 
 export { applyVideoPlayerSettings, applySubtitlesPreference };
-    

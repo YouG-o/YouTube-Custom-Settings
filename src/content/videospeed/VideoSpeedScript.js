@@ -12,6 +12,7 @@
     const ERROR_COLOR = '#F44336';  // Red
     const MUSIC_DETECTION_MAX_ATTEMPTS = 60;
     const MUSIC_DETECTION_RETRY_MS = 250;
+    const MUSIC_DETECTION_STATE_KEY = '__YCS_VIDEO_SPEED_MUSIC_DETECTION__';
     const EXPLICIT_MUSIC_VIDEO_TYPES = new Set([
         'MUSIC_VIDEO_TYPE_ATV',
         'MUSIC_VIDEO_TYPE_OFFICIAL_SOURCE_MUSIC',
@@ -136,6 +137,13 @@
         }
     }
 
+    function clearMusicDetectionState(token) {
+        const state = window[MUSIC_DETECTION_STATE_KEY];
+        if (token && state?.token !== token) return;
+        if (state?.timer) clearTimeout(state.timer);
+        delete window[MUSIC_DETECTION_STATE_KEY];
+    }
+
     function shouldApplySpeed() {
         // Read from YCS_SETTINGS
         const raw = localStorage.getItem('YCS_SETTINGS');
@@ -164,11 +172,20 @@
         return true;
     }
 
-    function setPlaybackSpeed(musicDetectionAttempt = 0) {
+    function setPlaybackSpeed(musicDetectionAttempt = 0, detectionToken = null) {
         try {
+            if (musicDetectionAttempt === 0) {
+                clearMusicDetectionState();
+                detectionToken = Symbol('music-detection');
+                window[MUSIC_DETECTION_STATE_KEY] = { token: detectionToken, timer: null };
+            } else if (window[MUSIC_DETECTION_STATE_KEY]?.token !== detectionToken) {
+                return false;
+            }
+
             // Don't apply speed changes to live streams
             if (isLiveStream()) {
                 log('Not changing speed for live stream');
+                clearMusicDetectionState(detectionToken);
                 return false;
             }
             
@@ -178,17 +195,37 @@
             const videoSpeed = ycsSettings.videoSpeed || {};
             
             const speedEnabled = videoSpeed.enabled === true;
-            if (!speedEnabled) return false;
+            if (!speedEnabled) {
+                const video = document.querySelector('video');
+                if (video) video.playbackRate = 1;
+                clearMusicDetectionState(detectionToken);
+                return false;
+            }
+
+            if (window.location.pathname.startsWith('/shorts') && videoSpeed.applyToShorts === false) {
+                const video = document.querySelector('video');
+                if (video) video.playbackRate = 1;
+                clearMusicDetectionState(detectionToken);
+                return false;
+            }
 
             if (videoSpeed.applyToMusicVideos !== true) {
                 const musicVideoStatus = getMusicVideoStatus();
                 if (musicVideoStatus === null && musicDetectionAttempt < MUSIC_DETECTION_MAX_ATTEMPTS) {
                     const video = document.querySelector('video');
                     if (video) video.playbackRate = 1;
-                    setTimeout(
-                        () => setPlaybackSpeed(musicDetectionAttempt + 1),
+                    const timer = setTimeout(
+                        () => setPlaybackSpeed(musicDetectionAttempt + 1, detectionToken),
                         MUSIC_DETECTION_RETRY_MS
                     );
+                    window[MUSIC_DETECTION_STATE_KEY] = { token: detectionToken, timer };
+                    return false;
+                }
+                if (musicVideoStatus === null) {
+                    const video = document.querySelector('video');
+                    if (video) video.playbackRate = 1;
+                    log('Music classification unavailable, keeping normal speed');
+                    clearMusicDetectionState(detectionToken);
                     return false;
                 }
                 if (musicVideoStatus === true) {
@@ -196,9 +233,12 @@
                     if (video) video.playbackRate = 1;
                     log('Music video detected, using normal speed');
                     updateAdjustedDurationDisplay(1);
+                    clearMusicDetectionState(detectionToken);
                     return true;
                 }
             }
+
+            clearMusicDetectionState(detectionToken);
 
             const preferredSpeed = videoSpeed.value || 1;
             
@@ -286,6 +326,7 @@
             updateAdjustedDurationDisplay(preferredSpeed);
             return true;
         } catch (error) {
+            clearMusicDetectionState(detectionToken);
             errorLog(`Failed to set playback speed: ${error.message}`);
             return false;
         }

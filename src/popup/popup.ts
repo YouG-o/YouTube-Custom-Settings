@@ -284,7 +284,7 @@ async function loadSettings() {
         videoSpeedSelect.value = String(settings.videoSpeed.value);
         toggleContainer(videoSpeedContainer, videoSpeedFeature.checked);
         applyShortsSpeed.checked = settings.videoSpeed.applyToShorts !== false;
-        applyMusicVideosSpeed.checked = settings.videoSpeed.applyToMusicVideos !== false;
+        applyMusicVideosSpeed.checked = settings.videoSpeed.applyToMusicVideos === true;
         
         subtitlesToggle.checked = settings.subtitlesPreference.enabled;
         subtitlesPreferenceSelect.value = settings.subtitlesPreference.value;
