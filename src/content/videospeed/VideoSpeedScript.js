@@ -114,6 +114,15 @@
             
             const speedEnabled = videoSpeed.enabled === true;
             if (!speedEnabled) {
+                const video = document.querySelector('video');
+                if (video) video.playbackRate = 1;
+                stopAdjustedProgressDisplay();
+                return false;
+            }
+
+            if (window.location.pathname.startsWith('/shorts') && videoSpeed.applyToShorts === false) {
+                const video = document.querySelector('video');
+                if (video) video.playbackRate = 1;
                 stopAdjustedProgressDisplay();
                 return false;
             }

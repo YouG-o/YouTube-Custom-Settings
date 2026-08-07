@@ -85,9 +85,9 @@ function applyStoredSettings() {
         handleVideoQuality();
     }
     
-    if (currentSettings.videoSpeed.enabled) {
-        handleVideoSpeed();
-    }
+    // Always sync video-speed state so disabling the feature can clean up
+    // page-context listeners and UI left by an earlier enabled state.
+    handleVideoSpeed();
     
     if (currentSettings.subtitlesPreference.enabled) {
         handleSubtitlesPreference();
