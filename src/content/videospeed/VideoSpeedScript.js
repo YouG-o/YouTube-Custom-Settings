@@ -19,7 +19,6 @@
         'MUSIC_VIDEO_TYPE_OMV',
         'MUSIC_VIDEO_TYPE_UGC'
     ]);
-    const OFFICIAL_ARTIST_BADGE_PATH_PREFIX = 'M9.03 2.242 8.272 3H7.2A4.2';
 
     // Simplified logger functions
     function log(message, ...args) {
@@ -107,35 +106,8 @@
 
             const category = playerResponse?.microformat?.playerMicroformatRenderer?.category ||
                 document.querySelector('meta[itemprop="genre"]')?.content;
-            if (!category) return null;
-            if (typeof category !== 'string' || category.toLowerCase() !== 'music') {
-                return false;
-            }
-
-            const pageAuthor = document.querySelector('[itemprop="author"] [itemprop="name"]')
-                ?.getAttribute('content') || '';
-            const author = playerResponse?.videoDetails?.author || pageAuthor;
-            if (/\s-\sTopic$/i.test(author)) return true;
-
-            const owner = document.querySelector('#owner ytd-video-owner-renderer, ytd-video-owner-renderer');
-            if (!owner) return null;
-
-            const ownerAuthor = owner.querySelector('#channel-name #text')?.getAttribute('title') ||
-                owner.querySelector('#channel-name')?.textContent?.trim() || '';
-            if (pageAuthor && ownerAuthor && pageAuthor !== ownerAuthor) return null;
-
-            const hasOfficialArtistBadge = Array.from(owner.querySelectorAll('ytd-badge-supported-renderer')).some((badge) => {
-                const badgeData = badge.data?.metadataBadgeRenderer || badge.data;
-                return badgeData?.icon?.iconType === 'AUDIO_BADGE' ||
-                    Array.from(badge.querySelectorAll('svg path')).some((path) =>
-                        path.getAttribute('d')?.startsWith(OFFICIAL_ARTIST_BADGE_PATH_PREFIX)
-                    );
-            });
-
-            // Owner renderer often appears before its badges. Treat missing badge
-            // as pending on Music pages so early injection cannot misclassify an
-            // official music video as a regular video.
-            return hasOfficialArtistBadge ? true : null;
+            if (!category || typeof category !== 'string') return null;
+            return category.toLowerCase() === 'music';
         } catch (error) {
             errorLog(`Error checking if video is music: ${error.message}`);
             return null;
