@@ -44,8 +44,7 @@ export async function handleVideoSpeed() {
     const speedEnabled = ycsSettings.videoSpeed?.enabled === true;
     
     if (!speedEnabled) {
-        videoSpeedLog('Video speed feature is disabled, not injecting script');
-        return;
+        videoSpeedLog('Video speed feature is disabled, clearing injected state');
     }
     
     // Check if current page is a shorts page
@@ -54,10 +53,9 @@ export async function handleVideoSpeed() {
     // Check if we should apply to shorts
     const applyToShorts = ycsSettings.videoSpeed?.applyToShorts !== false;
     
-    // Skip injection if this is a shorts page and we shouldn't apply speed to shorts
+    // The injected script also handles cleanup, so do not return before it runs.
     if (isShorts && !applyToShorts) {
-        videoSpeedLog('Not applying speed to shorts (disabled in settings)');
-        return;
+        videoSpeedLog('Clearing video speed for Shorts (disabled in settings)');
     }
     
     // If we get here, we need to inject the script
