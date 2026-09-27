@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- When custom video speed is enabled, the player timer shows the remaining time and the duration at the current playback speed (e.g. `-13:13 / 16:16` at 2x) in place of YouTube's timer. It uses the live playback speed, so it also updates when the speed is changed by hand. YouTube's timer comes back for live streams and when the speed setting is off.
+- The adjusted progress badge can show the remaining time at the current speed (e.g. `(-13:13 / 16:16)`). A click on the player time switches it between elapsed and remaining time, together with YouTube's own timer. The choice is kept for the next videos.
+- The adjusted progress badge uses the live playback speed, so it also updates when the speed is changed by hand.
 
 ## [1.14.1] - 2026-08-28
 

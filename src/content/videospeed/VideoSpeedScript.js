@@ -251,59 +251,96 @@
         return NaN;
     }
 
-    const TIMER_ID = 'ycs-adjusted-progress';
-    const TIMER_ACTIVE_CLASS = 'ycs-remaining-timer-active';
-    const TIMER_STYLE_ID = 'ycs-remaining-timer-style';
+    const BADGE_ID = 'ycs-adjusted-progress';
+    // Saved on youtube.com, so the choice is kept for the next videos
+    const REMAINING_MODE_KEY = 'YCS_SPEED_TIMER_REMAINING';
+    // Set when YouTube was seen to show remaining time as "-26:27"
+    const FOLLOW_YOUTUBE_KEY = 'YCS_SPEED_TIMER_FOLLOW_YOUTUBE';
 
     function getPlayerVideo() {
         const player = document.getElementById('movie_player') || document.getElementById('shorts-player') || document.getElementById('c4-player');
         return (player && player.querySelector('video')) || document.querySelector('video');
     }
 
-    function getTimeContentsElement(video) {
+    function getDurationElement(video) {
         const player = video && video.closest('.html5-video-player');
-        return (player && player.querySelector('.ytp-time-contents')) || document.querySelector('.ytp-time-contents');
+        return (player && player.querySelector('.ytp-time-duration')) || document.querySelector('.ytp-time-duration');
     }
 
-    // Hide YouTube's own "elapsed / duration" while our timer is shown
-    function ensureTimerStyle() {
-        if (document.getElementById(TIMER_STYLE_ID)) return;
-        const style = document.createElement('style');
-        style.id = TIMER_STYLE_ID;
-        style.textContent = `
-            .${TIMER_ACTIVE_CLASS} .ytp-time-current,
-            .${TIMER_ACTIVE_CLASS} .ytp-time-separator,
-            .${TIMER_ACTIVE_CLASS} .ytp-time-duration {
-                display: none !important;
-            }
-        `;
-        (document.head || document.documentElement).appendChild(style);
-    }
-
-    function removeTimer() {
-        document.querySelectorAll(`#${TIMER_ID}, #ycs-adjusted-duration`)
-            .forEach((timer) => timer.remove());
-        document.querySelectorAll(`.${TIMER_ACTIVE_CLASS}`)
-            .forEach((element) => element.classList.remove(TIMER_ACTIVE_CLASS));
-    }
-
-    function createTimer(timeContents) {
-        const existingTimers = Array.from(document.querySelectorAll(`#${TIMER_ID}, #ycs-adjusted-duration`));
-        const timer = existingTimers.shift() || document.createElement('span');
-        existingTimers.forEach((extraTimer) => extraTimer.remove());
-
-        timer.id = TIMER_ID;
-
-        // Put the timer where YouTube's current time is, also after YouTube re-renders it
-        const currentTimeElement = timeContents.querySelector('.ytp-time-current');
-        if (currentTimeElement) {
-            if (timer.nextElementSibling !== currentTimeElement) {
-                currentTimeElement.insertAdjacentElement('beforebegin', timer);
-            }
-        } else if (timer.parentElement !== timeContents) {
-            timeContents.appendChild(timer);
+    function readFlag(key) {
+        try {
+            return localStorage.getItem(key) === 'true';
+        } catch (error) {
+            return false;
         }
-        return timer;
+    }
+
+    function isRemainingMode() {
+        return readFlag(REMAINING_MODE_KEY);
+    }
+
+    function getCurrentTimeElement(video) {
+        const player = video && video.closest('.html5-video-player');
+        return (player && player.querySelector('.ytp-time-current')) || document.querySelector('.ytp-time-current');
+    }
+
+    // Follow YouTube's timer, so both timers always show the same mode.
+    // If YouTube never shows a "-", use our own mode, which a click switches.
+    function shouldShowRemaining(video) {
+        const currentTimeElement = getCurrentTimeElement(video);
+        const youtubeShowsRemaining = !!currentTimeElement &&
+            /^\s*[-\u2212]/.test(currentTimeElement.textContent || '');
+
+        if (youtubeShowsRemaining) {
+            if (!readFlag(FOLLOW_YOUTUBE_KEY)) {
+                try {
+                    localStorage.setItem(FOLLOW_YOUTUBE_KEY, 'true');
+                } catch (error) {
+                    // Ignore, the detection works again on the next update
+                }
+            }
+            return true;
+        }
+        if (readFlag(FOLLOW_YOUTUBE_KEY)) return false;
+        return isRemainingMode();
+    }
+
+    function setRemainingMode(enabled) {
+        try {
+            localStorage.setItem(REMAINING_MODE_KEY, String(enabled));
+        } catch (error) {
+            errorLog(`Failed to save speed timer mode: ${error.message}`);
+        }
+    }
+
+    function createAdjustedProgressBadge(video) {
+        const durationElement = getDurationElement(video);
+        if (!durationElement) return null;
+
+        const existingBadges = Array.from(document.querySelectorAll(`#${BADGE_ID}, #ycs-adjusted-duration`));
+        const badge = existingBadges.shift() || null;
+
+        existingBadges.forEach((extraBadge) => extraBadge.remove());
+
+        if (badge) {
+            // Move the badge if YouTube re-rendered the time display
+            if (badge.previousElementSibling !== durationElement) {
+                durationElement.insertAdjacentElement('afterend', badge);
+            }
+            return badge;
+        }
+
+        const newBadge = document.createElement('span');
+        newBadge.id = BADGE_ID;
+        newBadge.style.display = 'inline-block';
+        newBadge.style.marginLeft = '0.25rem';
+        newBadge.style.color = '#ccc';
+        newBadge.style.fontSize = '0.9em';
+        newBadge.style.userSelect = 'none';
+        // Clicks go through to YouTube's time button, so both timers switch together
+        newBadge.style.pointerEvents = 'none';
+        durationElement.insertAdjacentElement('afterend', newBadge);
+        return newBadge;
     }
 
     function stopAdjustedProgressDisplay() {
@@ -313,15 +350,20 @@
                 state.video.removeEventListener(eventName, state.update);
             });
         }
+        if (state?.clickHandler) {
+            document.removeEventListener('click', state.clickHandler, true);
+        }
         if (state?.retryTimer) {
             clearTimeout(state.retryTimer);
         }
         delete window[PROGRESS_STATE_KEY];
-        removeTimer();
+        document.querySelectorAll(`#${BADGE_ID}, #ycs-adjusted-duration`)
+            .forEach((badge) => badge.remove());
     }
 
-    // Show the remaining time and the duration at the current playback speed
-    // in place of YouTube's timer, e.g. "-13:13 / 16:16" at 2x.
+    // Show the time at the current playback speed beside YouTube's timer:
+    // "(3:03 / 16:16)" for elapsed time, "(-13:13 / 16:16)" for remaining time.
+    // A click on the time display switches between the two, like YouTube's own timer.
     // It uses the live playback rate, so a manual speed change is shown too.
     function startAdjustedProgressDisplay(speed, attempt = 0) {
         stopAdjustedProgressDisplay();
@@ -335,37 +377,44 @@
             return;
         }
 
-        ensureTimerStyle();
-
         const update = () => {
-            const timeContents = getTimeContentsElement(video);
-            if (!timeContents) return;
+            const badge = createAdjustedProgressBadge(video);
+            if (!badge) return;
 
             const currentSpeed = video.playbackRate;
             const durationSeconds = getVideoDurationSeconds();
+            let text = '';
 
-            // Show YouTube's own timer when we cannot calculate the time (e.g. live streams)
-            if (!Number.isFinite(currentSpeed) || currentSpeed <= 0 ||
-                !Number.isFinite(durationSeconds) || durationSeconds <= 0) {
-                removeTimer();
-                return;
+            if (Number.isFinite(currentSpeed) && currentSpeed > 0 && currentSpeed !== 1 &&
+                Number.isFinite(durationSeconds) && durationSeconds > 0) {
+                const elapsedSeconds = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+                const duration = formatTime(durationSeconds / currentSpeed);
+
+                if (shouldShowRemaining(video)) {
+                    const remainingSeconds = Math.max(0, durationSeconds - elapsedSeconds);
+                    text = `(-${formatTime(remainingSeconds / currentSpeed)} / ${duration})`;
+                } else {
+                    text = `(${formatTime(elapsedSeconds / currentSpeed)} / ${duration})`;
+                }
+                badge.title = `Time at ${currentSpeed}x playback speed`;
             }
 
-            const elapsedSeconds = Number.isFinite(video.currentTime) ? video.currentTime : 0;
-            const remainingSeconds = Math.max(0, durationSeconds - elapsedSeconds);
-            const text = `-${formatTime(remainingSeconds / currentSpeed)} / ${formatTime(durationSeconds / currentSpeed)}`;
-
-            const timer = createTimer(timeContents);
-            if (timer.textContent !== text) {
-                timer.textContent = text;
+            if (badge.textContent !== text) {
+                badge.textContent = text;
             }
-            timer.title = `Remaining time at ${currentSpeed}x playback speed`;
-            timeContents.classList.add(TIMER_ACTIVE_CLASS);
+        };
+
+        const clickHandler = (e) => {
+            if (!(e.target instanceof Element) || !e.target.closest('.ytp-time-contents')) return;
+            setRemainingMode(!isRemainingMode());
+            // Wait for YouTube to update its own timer first
+            setTimeout(update, 50);
         };
 
         const events = ['timeupdate', 'durationchange', 'loadedmetadata', 'seeked', 'ratechange'];
         events.forEach((eventName) => video.addEventListener(eventName, update));
-        window[PROGRESS_STATE_KEY] = { video, update, events };
+        document.addEventListener('click', clickHandler, true);
+        window[PROGRESS_STATE_KEY] = { video, update, events, clickHandler };
         update();
     }
 
