@@ -279,6 +279,44 @@
         }
     }
 
+    function isShowingRemainingTime(currentTimeElement) {
+        return /^\s*[-−]/.test(currentTimeElement.textContent || '');
+    }
+
+    function getVideoKey(video) {
+        const player = video.closest('.html5-video-player');
+        const videoData = player && typeof player.getVideoData === 'function' ? player.getVideoData() : null;
+        return (videoData && videoData.video_id) || video.currentSrc || window.location.href;
+    }
+
+    // Switch YouTube's own time display to remaining time (the same as a click on it).
+    // Try once per video, so a user who switches back to elapsed time keeps that choice.
+    let remainingToggleVideoKey = null;
+    function toggleYouTubeRemainingTime(video) {
+        const player = video.closest('.html5-video-player');
+        if (!player || player.classList.contains('ad-showing')) return;
+        if (!Number.isFinite(video.duration) || video.duration <= 0) return;
+
+        const videoKey = getVideoKey(video);
+        if (remainingToggleVideoKey === videoKey) return;
+
+        const currentTimeElement = player.querySelector('.ytp-time-current');
+        if (!currentTimeElement || !currentTimeElement.textContent) return;
+        if (isLiveStream()) return;
+
+        remainingToggleVideoKey = videoKey;
+        if (isShowingRemainingTime(currentTimeElement)) return;
+
+        currentTimeElement.click();
+        setTimeout(() => {
+            if (isShowingRemainingTime(currentTimeElement)) {
+                log('YouTube time display switched to remaining time');
+            } else {
+                errorLog('Could not switch YouTube time display to remaining time');
+            }
+        }, 300);
+    }
+
     // Keep the badge in sync while the video plays and when the speed changes.
     // The script can be injected many times, so add the listeners only once.
     function setupRemainingTimeListeners() {
@@ -289,6 +327,9 @@
             if (!(e.target instanceof HTMLVideoElement)) return;
             if (e.target !== getPlayerVideo()) return;
             updateAdjustedDurationDisplay(e.target);
+            if (e.type === 'timeupdate') {
+                toggleYouTubeRemainingTime(e.target);
+            }
         };
 
         ['timeupdate', 'ratechange', 'durationchange', 'seeked', 'emptied'].forEach((evt) => {
