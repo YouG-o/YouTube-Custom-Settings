@@ -7,12 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- YouTube's player time display is switched to remaining time on each new video (once per video, so a manual switch back is kept). Needs the custom video speed setting.
-
 ### Changed
-- The adjusted progress badge follows YouTube's time display. It shows the remaining time at the current speed (e.g. `(-4:18 / 5:00)`) when YouTube shows remaining time.
-- The adjusted progress badge uses the live playback speed, so it also updates when the speed is changed by hand.
+- When custom video speed is enabled, the player timer shows the remaining time and the duration at the current playback speed (e.g. `-13:13 / 16:16` at 2x) in place of YouTube's timer. It uses the live playback speed, so it also updates when the speed is changed by hand. YouTube's timer comes back for live streams and when the speed setting is off.
 
 ## [1.14.1] - 2026-08-28
 
