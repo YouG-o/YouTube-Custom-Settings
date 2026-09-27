@@ -329,12 +329,19 @@
         window[REMAINING_TOGGLE_KEY] = videoKey;
         if (isShowingRemainingTime(currentTimeElement)) return;
 
-        currentTimeElement.click();
+        // The clickable element is the time contents button, not the time span in it
+        const toggleButton = currentTimeElement.closest('.ytp-time-contents') || currentTimeElement;
+        toggleButton.click();
         setTimeout(() => {
-            if (isShowingRemainingTime(currentTimeElement)) {
+            const updatedTimeElement = getCurrentTimeElement(video);
+            if (isShowingRemainingTime(updatedTimeElement)) {
                 log('YouTube time display switched to remaining time');
             } else {
-                errorLog('Could not switch YouTube time display to remaining time');
+                errorLog('Could not switch YouTube time display to remaining time', {
+                    clicked: toggleButton.className,
+                    currentTime: updatedTimeElement && updatedTimeElement.textContent,
+                    ariaLabel: toggleButton.getAttribute('aria-label'),
+                });
             }
         }, 300);
     }
