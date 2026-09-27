@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- The adjusted duration badge next to the player time now shows the remaining time at the current playback speed (e.g. `(-4:18)`). It updates while the video plays and when the speed changes.
+
 
 ## [1.14.0] - 2026-08-06
 

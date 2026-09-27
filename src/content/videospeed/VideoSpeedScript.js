@@ -169,7 +169,7 @@
 
                 video.playbackRate = preferredSpeed;
                 log('Playback speed set to (via HTML5 video element):', preferredSpeed);
-                updateAdjustedDurationDisplay(preferredSpeed);
+                updateAdjustedDurationDisplay();
                 return true;
             }
 
@@ -196,7 +196,7 @@
             // Use YouTube player API to set playback rate for normal speeds
             player.setPlaybackRate(preferredSpeed);
             log('Playback speed set to (via YouTube player API):', preferredSpeed);
-            updateAdjustedDurationDisplay(preferredSpeed);
+            updateAdjustedDurationDisplay();
             return true;
         } catch (error) {
             errorLog(`Failed to set playback speed: ${error.message}`);
@@ -216,29 +216,18 @@
         return `${minutes}:${String(secs).padStart(2, '0')}`;
     }
 
-    function getVideoDurationSeconds() {
-        const video = document.querySelector('video');
-        if (video && Number.isFinite(video.duration) && video.duration > 0) {
-            return video.duration;
-        }
-
+    function getPlayerVideo() {
         const player = document.getElementById('movie_player') || document.getElementById('shorts-player') || document.getElementById('c4-player');
-        if (player && typeof player.getDuration === 'function') {
-            const duration = player.getDuration();
-            if (Number.isFinite(duration) && duration > 0) {
-                return duration;
-            }
-        }
-
-        return NaN;
+        return (player && player.querySelector('video')) || document.querySelector('video');
     }
 
-    function getDurationElement() {
-        return document.querySelector('.ytp-time-duration');
+    function getDurationElement(video) {
+        const player = video && video.closest('.html5-video-player');
+        return (player && player.querySelector('.ytp-time-duration')) || document.querySelector('.ytp-time-duration');
     }
 
-    function createAdjustedDurationBadge() {
-        const durationElement = getDurationElement();
+    function createAdjustedDurationBadge(video) {
+        const durationElement = getDurationElement(video);
         if (!durationElement) return null;
 
         const existingBadges = Array.from(document.querySelectorAll('#ycs-adjusted-duration'));
@@ -247,6 +236,10 @@
         existingBadges.forEach((extraBadge) => extraBadge.remove());
 
         if (badge) {
+            // Move the badge if YouTube re-rendered the time display
+            if (badge.previousElementSibling !== durationElement) {
+                durationElement.insertAdjacentElement('afterend', badge);
+            }
             return badge;
         }
 
@@ -262,30 +255,48 @@
         return newBadge;
     }
 
-    function updateAdjustedDurationDisplay(speed, attempt = 0) {
-        const badge = createAdjustedDurationBadge();
+    // Show the remaining time at the current playback speed, e.g. "(-4:18)"
+    function updateAdjustedDurationDisplay(video = getPlayerVideo(), attempt = 0) {
+        const badge = createAdjustedDurationBadge(video);
         if (!badge) {
             if (attempt < 5) {
-                setTimeout(() => updateAdjustedDurationDisplay(speed, attempt + 1), 200);
+                setTimeout(() => updateAdjustedDurationDisplay(video, attempt + 1), 200);
             }
             return;
         }
 
-        if (speed === 1) {
-            badge.textContent = '';
-            return;
+        let text = '';
+        const speed = video ? video.playbackRate : 1;
+        const duration = video ? video.duration : NaN;
+
+        if (speed > 0 && speed !== 1 && Number.isFinite(duration) && duration > 0) {
+            const remainingSeconds = Math.max(0, duration - video.currentTime) / speed;
+            text = `(-${formatTime(remainingSeconds)})`;
         }
 
-        const durationSeconds = getVideoDurationSeconds();
-        if (!Number.isFinite(durationSeconds) || durationSeconds <= 0) {
-            badge.textContent = '';
-            return;
+        if (badge.textContent !== text) {
+            badge.textContent = text;
         }
+    }
 
-        const adjustedSeconds = durationSeconds / speed;
-        badge.textContent = `(${formatTime(adjustedSeconds)})`;
+    // Keep the badge in sync while the video plays and when the speed changes.
+    // The script can be injected many times, so add the listeners only once.
+    function setupRemainingTimeListeners() {
+        if (window.__ycsRemainingTimeListeners) return;
+        window.__ycsRemainingTimeListeners = true;
+
+        const onVideoEvent = (e) => {
+            if (!(e.target instanceof HTMLVideoElement)) return;
+            if (e.target !== getPlayerVideo()) return;
+            updateAdjustedDurationDisplay(e.target);
+        };
+
+        ['timeupdate', 'ratechange', 'durationchange', 'seeked', 'emptied'].forEach((evt) => {
+            document.addEventListener(evt, onVideoEvent, true);
+        });
     }
 
     // Execute immediately when script is injected
+    setupRemainingTimeListeners();
     setPlaybackSpeed();
 })();
