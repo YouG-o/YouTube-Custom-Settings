@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- The adjusted progress badge can show the remaining time at the current speed (e.g. `(-13:13 / 16:16)`). A click on the player time switches it between elapsed and remaining time. Each new video starts with elapsed time.
+- The adjusted progress badge uses the live playback speed, so it also updates when the speed is changed by hand.
+
 ## [1.14.1] - 2026-08-28
 
 ### Changed

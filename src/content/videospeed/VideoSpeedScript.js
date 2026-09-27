@@ -251,30 +251,61 @@
         return NaN;
     }
 
-    function getDurationElement() {
-        return document.querySelector('.ytp-time-duration');
+    const BADGE_ID = 'ycs-adjusted-progress';
+    // Remaining time mode for the current video. Each new video starts with elapsed time.
+    // Kept on window because this script is injected many times.
+    const MODE_STATE_KEY = '__YCS_SPEED_TIMER_MODE__';
+
+    function getPlayerVideo() {
+        const player = document.getElementById('movie_player') || document.getElementById('shorts-player') || document.getElementById('c4-player');
+        return (player && player.querySelector('video')) || document.querySelector('video');
     }
 
-    function createAdjustedProgressBadge() {
-        const durationElement = getDurationElement();
+    function getDurationElement(video) {
+        const player = video && video.closest('.html5-video-player');
+        return (player && player.querySelector('.ytp-time-duration')) || document.querySelector('.ytp-time-duration');
+    }
+
+    function getVideoKey(video) {
+        const player = video.closest('.html5-video-player');
+        const videoData = player && typeof player.getVideoData === 'function' ? player.getVideoData() : null;
+        return (videoData && videoData.video_id) || window.location.href;
+    }
+
+    function isRemainingMode(video) {
+        const mode = window[MODE_STATE_KEY];
+        return !!mode && mode.remaining && mode.videoKey === getVideoKey(video);
+    }
+
+    function setRemainingMode(video, enabled) {
+        window[MODE_STATE_KEY] = { videoKey: getVideoKey(video), remaining: enabled };
+    }
+
+    function createAdjustedProgressBadge(video) {
+        const durationElement = getDurationElement(video);
         if (!durationElement) return null;
 
-        const existingBadges = Array.from(document.querySelectorAll('#ycs-adjusted-progress, #ycs-adjusted-duration'));
+        const existingBadges = Array.from(document.querySelectorAll(`#${BADGE_ID}, #ycs-adjusted-duration`));
         const badge = existingBadges.shift() || null;
 
         existingBadges.forEach((extraBadge) => extraBadge.remove());
 
         if (badge) {
+            // Move the badge if YouTube re-rendered the time display
+            if (badge.previousElementSibling !== durationElement) {
+                durationElement.insertAdjacentElement('afterend', badge);
+            }
             return badge;
         }
 
         const newBadge = document.createElement('span');
-        newBadge.id = 'ycs-adjusted-progress';
+        newBadge.id = BADGE_ID;
         newBadge.style.display = 'inline-block';
         newBadge.style.marginLeft = '0.25rem';
         newBadge.style.color = '#ccc';
         newBadge.style.fontSize = '0.9em';
         newBadge.style.userSelect = 'none';
+        // Clicks go through to YouTube's time display, where the click handler switches the mode
         newBadge.style.pointerEvents = 'none';
         durationElement.insertAdjacentElement('afterend', newBadge);
         return newBadge;
@@ -287,19 +318,25 @@
                 state.video.removeEventListener(eventName, state.update);
             });
         }
+        if (state?.clickHandler) {
+            document.removeEventListener('click', state.clickHandler, true);
+        }
         if (state?.retryTimer) {
             clearTimeout(state.retryTimer);
         }
         delete window[PROGRESS_STATE_KEY];
-        document.querySelectorAll('#ycs-adjusted-progress, #ycs-adjusted-duration')
+        document.querySelectorAll(`#${BADGE_ID}, #ycs-adjusted-duration`)
             .forEach((badge) => badge.remove());
     }
 
+    // Show the time at the current playback speed beside YouTube's timer:
+    // "(3:03 / 16:16)" for elapsed time, "(-13:13 / 16:16)" for remaining time.
+    // A click on the time display switches between the two. Each new video starts with elapsed time.
+    // It uses the live playback rate, so a manual speed change is shown too.
     function startAdjustedProgressDisplay(speed, attempt = 0) {
         stopAdjustedProgressDisplay();
-        if (!Number.isFinite(speed) || speed === 1) return;
 
-        const video = document.querySelector('video');
+        const video = getPlayerVideo();
         if (!video) {
             if (attempt < 10) {
                 const retryTimer = setTimeout(() => startAdjustedProgressDisplay(speed, attempt + 1), 200);
@@ -309,22 +346,42 @@
         }
 
         const update = () => {
-            const badge = createAdjustedProgressBadge();
+            const badge = createAdjustedProgressBadge(video);
             if (!badge) return;
 
+            const currentSpeed = video.playbackRate;
             const durationSeconds = getVideoDurationSeconds();
-            if (!Number.isFinite(durationSeconds) || durationSeconds <= 0) {
-                badge.textContent = '';
-                return;
+            let text = '';
+
+            if (Number.isFinite(currentSpeed) && currentSpeed > 0 && currentSpeed !== 1 &&
+                Number.isFinite(durationSeconds) && durationSeconds > 0) {
+                const elapsedSeconds = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+                const duration = formatTime(durationSeconds / currentSpeed);
+
+                if (isRemainingMode(video)) {
+                    const remainingSeconds = Math.max(0, durationSeconds - elapsedSeconds);
+                    text = `(-${formatTime(remainingSeconds / currentSpeed)} / ${duration})`;
+                } else {
+                    text = `(${formatTime(elapsedSeconds / currentSpeed)} / ${duration})`;
+                }
+                badge.title = `Time at ${currentSpeed}x playback speed`;
             }
 
-            const elapsedSeconds = Number.isFinite(video.currentTime) ? video.currentTime : 0;
-            badge.textContent = `(${formatTime(elapsedSeconds / speed)} / ${formatTime(durationSeconds / speed)})`;
-            badge.title = `Time at ${speed}x playback speed`;
+            if (badge.textContent !== text) {
+                badge.textContent = text;
+            }
         };
-        const events = ['timeupdate', 'durationchange', 'loadedmetadata', 'seeked'];
+
+        const clickHandler = (e) => {
+            if (!(e.target instanceof Element) || !e.target.closest('.ytp-time-contents')) return;
+            setRemainingMode(video, !isRemainingMode(video));
+            update();
+        };
+
+        const events = ['timeupdate', 'durationchange', 'loadedmetadata', 'seeked', 'ratechange'];
         events.forEach((eventName) => video.addEventListener(eventName, update));
-        window[PROGRESS_STATE_KEY] = { video, update, events };
+        document.addEventListener('click', clickHandler, true);
+        window[PROGRESS_STATE_KEY] = { video, update, events, clickHandler };
         update();
     }
 
