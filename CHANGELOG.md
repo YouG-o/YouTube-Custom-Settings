@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- The custom speed was sometimes reset to 1x after a page reload, because YouTube set its own speed a moment after the extension. For 5 seconds after the speed is set, the extension now sets it again if it changes without user input.
+
 ### Changed
 - The adjusted progress badge can show the remaining time at the current speed (e.g. `(-13:13 / 16:16)`). A click on the player time switches it between elapsed and remaining time. Each new video starts with elapsed time.
 - The adjusted progress badge uses the live playback speed, so it also updates when the speed is changed by hand.
