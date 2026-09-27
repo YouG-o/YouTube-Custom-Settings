@@ -1,6 +1,6 @@
 {
   "name": "ycs",
-  "version": "1.14.0",
+  "version": "1.14.1",
   "description": "Set default values to YouTube (quality, speed, subtitles, audio), also includes an audio normalizer and members-only video filter.",
   "scripts": {
     "clean": "rm -rf dist && rm -f manifest.json",
@@ -61,7 +61,7 @@
     "rimraf": "^6.0.1",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
-    "web-ext": "^9.0.0"
+    "web-ext": "9.0.0"
   },
   "dependencies": {
     "webextension-polyfill": "^0.12.0"
