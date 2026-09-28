@@ -11,6 +11,12 @@
     const LOG_COLOR = '#fca5a5';  // Light red
     const ERROR_COLOR = '#F44336';  // Red
     const PROGRESS_STATE_KEY = '__YCS_VIDEO_SPEED_PROGRESS__';
+    // YouTube can set its own speed a moment after the extension (e.g. on a full page load).
+    // For a short time after the speed is set, set it again if it changes without user input.
+    const SPEED_GUARD_KEY = '__YCS_VIDEO_SPEED_GUARD__';
+    const SPEED_GUARD_MS = 5000;
+    const SPEED_GUARD_MAX_FIXES = 5;
+    const USER_INPUT_WINDOW_MS = 2000;
 
     // Simplified logger functions
     function log(message, ...args) {
@@ -98,12 +104,76 @@
         return true;
     }
 
+    function getSpeedGuard() {
+        let guard = window[SPEED_GUARD_KEY];
+        if (guard) return guard;
+
+        guard = { rate: null, until: 0, fixes: 0, lastUserInput: 0 };
+        window[SPEED_GUARD_KEY] = guard;
+
+        // User speed changes in the player must not be undone
+        const markUserInput = (e) => {
+            if (e.target instanceof Element && e.target.closest('.ytp-settings-menu, .ytp-popup')) {
+                guard.lastUserInput = Date.now();
+            }
+        };
+        ['pointerdown', 'click', 'input', 'change'].forEach((eventName) => {
+            document.addEventListener(eventName, markUserInput, true);
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '<' || e.key === '>') {
+                guard.lastUserInput = Date.now();
+            }
+        }, true);
+
+        document.addEventListener('ratechange', (e) => {
+            const video = e.target;
+            if (!(video instanceof HTMLVideoElement)) return;
+
+            const now = Date.now();
+            if (guard.rate === null || now > guard.until) return;
+            if (Math.abs(video.playbackRate - guard.rate) < 0.001) return;
+
+            if (now - guard.lastUserInput < USER_INPUT_WINDOW_MS) {
+                guard.until = 0;
+                return;
+            }
+
+            const player = video.closest('.html5-video-player');
+            if (player && player.classList.contains('ad-showing')) return;
+            if (guard.fixes >= SPEED_GUARD_MAX_FIXES) return;
+            guard.fixes++;
+
+            log(`Speed changed to ${video.playbackRate} without user input, set it again to ${guard.rate}`);
+            if (guard.rate >= 0.25 && guard.rate <= 2.0 && player && typeof player.setPlaybackRate === 'function') {
+                player.setPlaybackRate(guard.rate);
+            } else {
+                video.playbackRate = guard.rate;
+            }
+        }, true);
+
+        return guard;
+    }
+
+    function guardPlaybackRate(rate) {
+        const guard = getSpeedGuard();
+        guard.rate = rate;
+        guard.until = Date.now() + SPEED_GUARD_MS;
+        guard.fixes = 0;
+    }
+
+    function stopSpeedGuard() {
+        const guard = window[SPEED_GUARD_KEY];
+        if (guard) guard.until = 0;
+    }
+
     function setPlaybackSpeed() {
         try {
             // Don't apply speed changes to live streams
             if (isLiveStream()) {
                 log('Not changing speed for live stream');
                 stopAdjustedProgressDisplay();
+                stopSpeedGuard();
                 return false;
             }
             
@@ -117,6 +187,7 @@
                 const video = document.querySelector('video');
                 if (video) video.playbackRate = 1;
                 stopAdjustedProgressDisplay();
+                stopSpeedGuard();
                 return false;
             }
 
@@ -124,6 +195,7 @@
                 const video = document.querySelector('video');
                 if (video) video.playbackRate = 1;
                 stopAdjustedProgressDisplay();
+                stopSpeedGuard();
                 return false;
             }
 
@@ -151,10 +223,12 @@
                         log('Duration rule matched, not applying speed (using x1)');
                         video.playbackRate = 1;
                         stopAdjustedProgressDisplay();
+                        stopSpeedGuard();
                         return true;
                     }
                     video.playbackRate = preferredSpeed;
                     log('Playback speed set to (via HTML5 video element):', preferredSpeed);
+                    guardPlaybackRate(preferredSpeed);
                     startAdjustedProgressDisplay(preferredSpeed);
                     return true;
                 } else {
@@ -165,6 +239,7 @@
                     }
                     video.playbackRate = preferredSpeed;
                     log('Playback speed set to (via HTML5 video element):', preferredSpeed);
+                    guardPlaybackRate(preferredSpeed);
                     startAdjustedProgressDisplay(preferredSpeed);
                     return true;
                 }
@@ -186,6 +261,7 @@
 
                 video.playbackRate = preferredSpeed;
                 log('Playback speed set to (via HTML5 video element):', preferredSpeed);
+                guardPlaybackRate(preferredSpeed);
                 startAdjustedProgressDisplay(preferredSpeed);
                 return true;
             }
@@ -206,6 +282,7 @@
                         const video = document.querySelector('video');
                         if (video) video.playbackRate = 1;
                         stopAdjustedProgressDisplay();
+                        stopSpeedGuard();
                         return true;
                     }
                 }
@@ -214,6 +291,7 @@
             // Use YouTube player API to set playback rate for normal speeds
             player.setPlaybackRate(preferredSpeed);
             log('Playback speed set to (via YouTube player API):', preferredSpeed);
+            guardPlaybackRate(preferredSpeed);
             startAdjustedProgressDisplay(preferredSpeed);
             return true;
         } catch (error) {
@@ -251,30 +329,61 @@
         return NaN;
     }
 
-    function getDurationElement() {
-        return document.querySelector('.ytp-time-duration');
+    const BADGE_ID = 'ycs-adjusted-progress';
+    // Remaining time mode for the current video. Each new video starts with elapsed time.
+    // Kept on window because this script is injected many times.
+    const MODE_STATE_KEY = '__YCS_SPEED_TIMER_MODE__';
+
+    function getPlayerVideo() {
+        const player = document.getElementById('movie_player') || document.getElementById('shorts-player') || document.getElementById('c4-player');
+        return (player && player.querySelector('video')) || document.querySelector('video');
     }
 
-    function createAdjustedProgressBadge() {
-        const durationElement = getDurationElement();
+    function getDurationElement(video) {
+        const player = video && video.closest('.html5-video-player');
+        return (player && player.querySelector('.ytp-time-duration')) || document.querySelector('.ytp-time-duration');
+    }
+
+    function getVideoKey(video) {
+        const player = video.closest('.html5-video-player');
+        const videoData = player && typeof player.getVideoData === 'function' ? player.getVideoData() : null;
+        return (videoData && videoData.video_id) || window.location.href;
+    }
+
+    function isRemainingMode(video) {
+        const mode = window[MODE_STATE_KEY];
+        return !!mode && mode.remaining && mode.videoKey === getVideoKey(video);
+    }
+
+    function setRemainingMode(video, enabled) {
+        window[MODE_STATE_KEY] = { videoKey: getVideoKey(video), remaining: enabled };
+    }
+
+    function createAdjustedProgressBadge(video) {
+        const durationElement = getDurationElement(video);
         if (!durationElement) return null;
 
-        const existingBadges = Array.from(document.querySelectorAll('#ycs-adjusted-progress, #ycs-adjusted-duration'));
+        const existingBadges = Array.from(document.querySelectorAll(`#${BADGE_ID}, #ycs-adjusted-duration`));
         const badge = existingBadges.shift() || null;
 
         existingBadges.forEach((extraBadge) => extraBadge.remove());
 
         if (badge) {
+            // Move the badge if YouTube re-rendered the time display
+            if (badge.previousElementSibling !== durationElement) {
+                durationElement.insertAdjacentElement('afterend', badge);
+            }
             return badge;
         }
 
         const newBadge = document.createElement('span');
-        newBadge.id = 'ycs-adjusted-progress';
+        newBadge.id = BADGE_ID;
         newBadge.style.display = 'inline-block';
         newBadge.style.marginLeft = '0.25rem';
         newBadge.style.color = '#ccc';
         newBadge.style.fontSize = '0.9em';
         newBadge.style.userSelect = 'none';
+        // Clicks go through to YouTube's time display, where the click handler switches the mode
         newBadge.style.pointerEvents = 'none';
         durationElement.insertAdjacentElement('afterend', newBadge);
         return newBadge;
@@ -287,19 +396,25 @@
                 state.video.removeEventListener(eventName, state.update);
             });
         }
+        if (state?.clickHandler) {
+            document.removeEventListener('click', state.clickHandler, true);
+        }
         if (state?.retryTimer) {
             clearTimeout(state.retryTimer);
         }
         delete window[PROGRESS_STATE_KEY];
-        document.querySelectorAll('#ycs-adjusted-progress, #ycs-adjusted-duration')
+        document.querySelectorAll(`#${BADGE_ID}, #ycs-adjusted-duration`)
             .forEach((badge) => badge.remove());
     }
 
+    // Show the time at the current playback speed beside YouTube's timer:
+    // "(3:03 / 16:16)" for elapsed time, "(-13:13 / 16:16)" for remaining time.
+    // A click on the time display switches between the two. Each new video starts with elapsed time.
+    // It uses the live playback rate, so a manual speed change is shown too.
     function startAdjustedProgressDisplay(speed, attempt = 0) {
         stopAdjustedProgressDisplay();
-        if (!Number.isFinite(speed) || speed === 1) return;
 
-        const video = document.querySelector('video');
+        const video = getPlayerVideo();
         if (!video) {
             if (attempt < 10) {
                 const retryTimer = setTimeout(() => startAdjustedProgressDisplay(speed, attempt + 1), 200);
@@ -309,22 +424,42 @@
         }
 
         const update = () => {
-            const badge = createAdjustedProgressBadge();
+            const badge = createAdjustedProgressBadge(video);
             if (!badge) return;
 
+            const currentSpeed = video.playbackRate;
             const durationSeconds = getVideoDurationSeconds();
-            if (!Number.isFinite(durationSeconds) || durationSeconds <= 0) {
-                badge.textContent = '';
-                return;
+            let text = '';
+
+            if (Number.isFinite(currentSpeed) && currentSpeed > 0 && currentSpeed !== 1 &&
+                Number.isFinite(durationSeconds) && durationSeconds > 0) {
+                const elapsedSeconds = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+                const duration = formatTime(durationSeconds / currentSpeed);
+
+                if (isRemainingMode(video)) {
+                    const remainingSeconds = Math.max(0, durationSeconds - elapsedSeconds);
+                    text = `(-${formatTime(remainingSeconds / currentSpeed)} / ${duration})`;
+                } else {
+                    text = `(${formatTime(elapsedSeconds / currentSpeed)} / ${duration})`;
+                }
+                badge.title = `Time at ${currentSpeed}x playback speed`;
             }
 
-            const elapsedSeconds = Number.isFinite(video.currentTime) ? video.currentTime : 0;
-            badge.textContent = `(${formatTime(elapsedSeconds / speed)} / ${formatTime(durationSeconds / speed)})`;
-            badge.title = `Time at ${speed}x playback speed`;
+            if (badge.textContent !== text) {
+                badge.textContent = text;
+            }
         };
-        const events = ['timeupdate', 'durationchange', 'loadedmetadata', 'seeked'];
+
+        const clickHandler = (e) => {
+            if (!(e.target instanceof Element) || !e.target.closest('.ytp-time-contents')) return;
+            setRemainingMode(video, !isRemainingMode(video));
+            update();
+        };
+
+        const events = ['timeupdate', 'durationchange', 'loadedmetadata', 'seeked', 'ratechange'];
         events.forEach((eventName) => video.addEventListener(eventName, update));
-        window[PROGRESS_STATE_KEY] = { video, update, events };
+        document.addEventListener('click', clickHandler, true);
+        window[PROGRESS_STATE_KEY] = { video, update, events, clickHandler };
         update();
     }
 
