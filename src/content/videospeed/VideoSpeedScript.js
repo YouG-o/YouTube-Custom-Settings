@@ -11,12 +11,6 @@
     const LOG_COLOR = '#fca5a5';  // Light red
     const ERROR_COLOR = '#F44336';  // Red
     const PROGRESS_STATE_KEY = '__YCS_VIDEO_SPEED_PROGRESS__';
-    // YouTube can set its own speed a moment after the extension (e.g. on a full page load).
-    // For a short time after the speed is set, set it again if it changes without user input.
-    const SPEED_GUARD_KEY = '__YCS_VIDEO_SPEED_GUARD__';
-    const SPEED_GUARD_MS = 5000;
-    const SPEED_GUARD_MAX_FIXES = 5;
-    const USER_INPUT_WINDOW_MS = 2000;
 
     // Simplified logger functions
     function log(message, ...args) {
@@ -104,76 +98,12 @@
         return true;
     }
 
-    function getSpeedGuard() {
-        let guard = window[SPEED_GUARD_KEY];
-        if (guard) return guard;
-
-        guard = { rate: null, until: 0, fixes: 0, lastUserInput: 0 };
-        window[SPEED_GUARD_KEY] = guard;
-
-        // User speed changes in the player must not be undone
-        const markUserInput = (e) => {
-            if (e.target instanceof Element && e.target.closest('.ytp-settings-menu, .ytp-popup')) {
-                guard.lastUserInput = Date.now();
-            }
-        };
-        ['pointerdown', 'click', 'input', 'change'].forEach((eventName) => {
-            document.addEventListener(eventName, markUserInput, true);
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === '<' || e.key === '>') {
-                guard.lastUserInput = Date.now();
-            }
-        }, true);
-
-        document.addEventListener('ratechange', (e) => {
-            const video = e.target;
-            if (!(video instanceof HTMLVideoElement)) return;
-
-            const now = Date.now();
-            if (guard.rate === null || now > guard.until) return;
-            if (Math.abs(video.playbackRate - guard.rate) < 0.001) return;
-
-            if (now - guard.lastUserInput < USER_INPUT_WINDOW_MS) {
-                guard.until = 0;
-                return;
-            }
-
-            const player = video.closest('.html5-video-player');
-            if (player && player.classList.contains('ad-showing')) return;
-            if (guard.fixes >= SPEED_GUARD_MAX_FIXES) return;
-            guard.fixes++;
-
-            log(`Speed changed to ${video.playbackRate} without user input, set it again to ${guard.rate}`);
-            if (guard.rate >= 0.25 && guard.rate <= 2.0 && player && typeof player.setPlaybackRate === 'function') {
-                player.setPlaybackRate(guard.rate);
-            } else {
-                video.playbackRate = guard.rate;
-            }
-        }, true);
-
-        return guard;
-    }
-
-    function guardPlaybackRate(rate) {
-        const guard = getSpeedGuard();
-        guard.rate = rate;
-        guard.until = Date.now() + SPEED_GUARD_MS;
-        guard.fixes = 0;
-    }
-
-    function stopSpeedGuard() {
-        const guard = window[SPEED_GUARD_KEY];
-        if (guard) guard.until = 0;
-    }
-
     function setPlaybackSpeed() {
         try {
             // Don't apply speed changes to live streams
             if (isLiveStream()) {
                 log('Not changing speed for live stream');
                 stopAdjustedProgressDisplay();
-                stopSpeedGuard();
                 return false;
             }
             
@@ -187,7 +117,6 @@
                 const video = document.querySelector('video');
                 if (video) video.playbackRate = 1;
                 stopAdjustedProgressDisplay();
-                stopSpeedGuard();
                 return false;
             }
 
@@ -195,7 +124,6 @@
                 const video = document.querySelector('video');
                 if (video) video.playbackRate = 1;
                 stopAdjustedProgressDisplay();
-                stopSpeedGuard();
                 return false;
             }
 
@@ -223,12 +151,10 @@
                         log('Duration rule matched, not applying speed (using x1)');
                         video.playbackRate = 1;
                         stopAdjustedProgressDisplay();
-                        stopSpeedGuard();
                         return true;
                     }
                     video.playbackRate = preferredSpeed;
                     log('Playback speed set to (via HTML5 video element):', preferredSpeed);
-                    guardPlaybackRate(preferredSpeed);
                     startAdjustedProgressDisplay(preferredSpeed);
                     return true;
                 } else {
@@ -239,7 +165,6 @@
                     }
                     video.playbackRate = preferredSpeed;
                     log('Playback speed set to (via HTML5 video element):', preferredSpeed);
-                    guardPlaybackRate(preferredSpeed);
                     startAdjustedProgressDisplay(preferredSpeed);
                     return true;
                 }
@@ -261,7 +186,6 @@
 
                 video.playbackRate = preferredSpeed;
                 log('Playback speed set to (via HTML5 video element):', preferredSpeed);
-                guardPlaybackRate(preferredSpeed);
                 startAdjustedProgressDisplay(preferredSpeed);
                 return true;
             }
@@ -282,7 +206,6 @@
                         const video = document.querySelector('video');
                         if (video) video.playbackRate = 1;
                         stopAdjustedProgressDisplay();
-                        stopSpeedGuard();
                         return true;
                     }
                 }
@@ -291,7 +214,6 @@
             // Use YouTube player API to set playback rate for normal speeds
             player.setPlaybackRate(preferredSpeed);
             log('Playback speed set to (via YouTube player API):', preferredSpeed);
-            guardPlaybackRate(preferredSpeed);
             startAdjustedProgressDisplay(preferredSpeed);
             return true;
         } catch (error) {
