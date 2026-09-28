@@ -360,7 +360,7 @@
 
                 if (isRemainingMode(video)) {
                     const remainingSeconds = Math.max(0, durationSeconds - elapsedSeconds);
-                    text = `(-${formatTime(remainingSeconds / currentSpeed)} / ${duration})`;
+                    text = `(-${formatTime(remainingSeconds / currentSpeed)})`;
                 } else {
                     text = `(${formatTime(elapsedSeconds / currentSpeed)} / ${duration})`;
                 }
