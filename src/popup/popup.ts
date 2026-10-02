@@ -433,6 +433,44 @@ function toggleContainer(container: HTMLElement, isVisible: boolean) {
     container.style.display = isVisible ? 'block' : 'none';
 }
 
+function initSettingsCategoryNavigation() {
+    const navigation = document.querySelector<HTMLElement>('[data-settings-navigation]');
+    const featureList = document.getElementById('settingsFeatureList');
+    const activeHeading = document.getElementById('activeSettingsCategory');
+
+    if (!navigation || !featureList || !activeHeading) return;
+
+    const buttons = Array.from(navigation.querySelectorAll<HTMLButtonElement>('[data-settings-nav]'));
+    const featureCards = Array.from(featureList.querySelectorAll<HTMLElement>('[data-settings-category]'));
+
+    const selectCategory = (button: HTMLButtonElement) => {
+        const category = button.dataset.settingsNav;
+        if (!category) return;
+
+        buttons.forEach((item) => {
+            if (item === button) {
+                item.setAttribute('aria-current', 'page');
+            } else {
+                item.removeAttribute('aria-current');
+            }
+        });
+
+        featureCards.forEach((card) => {
+            card.hidden = card.dataset.settingsCategory !== category;
+        });
+
+        activeHeading.dataset.settingsCategoryHeading = category;
+        activeHeading.textContent = button.textContent?.trim() ?? '';
+    };
+
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => selectCategory(button));
+    });
+
+    const initialButton = buttons.find(button => button.getAttribute('aria-current') === 'page') ?? buttons[0];
+    if (initialButton) selectCategory(initialButton);
+}
+
 function initFeatureTooltips() {
     const tooltip = document.getElementById('featureTooltip');
     const triggers = document.querySelectorAll<SVGSVGElement>('[data-tooltip-i18n]');
@@ -648,6 +686,7 @@ function initEventListeners() {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     localizeDocument();
+    initSettingsCategoryNavigation();
     initFeatureTooltips();
     displayExtensionVersion();
     loadSettings();

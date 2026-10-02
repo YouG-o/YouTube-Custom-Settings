@@ -5,10 +5,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="../styles/main.css">
         <title>YouTube Custom Settings - Welcome</title>
+        <style>
+            #activeSettingsCategory[data-settings-category-heading="advanced"] {
+                color: #fdba74;
+                border-bottom: 2px solid #f97316;
+                padding-bottom: 0.5rem;
+            }
+        </style>
     </head>
     
     <body class="bg-gray-700 text-white">
-        <div class="max-w-3xl mx-auto p-6">
+        <div class="max-w-6xl mx-auto p-6">
             <!-- Header -->
         <header class="pb-4 border-b border-gray-600">
             <h1 class="text-2xl font-semibold text-white flex items-center gap-2 mb-2" id="pageTitle">
@@ -43,10 +50,30 @@
             </div>
         </header>
 
-            <main class="pb-[110px]">
-                <div class="space-y-6">
+                <main class="pb-[110px]">
+                <div class="grid grid-cols-1 gap-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10">
+                    <aside class="lg:sticky lg:top-6 lg:self-start">
+                    <nav aria-label="Settings categories" data-settings-navigation
+                         class="flex gap-2 overflow-x-auto border-b border-gray-600 pb-2 lg:flex-col lg:overflow-visible lg:border-b-0 lg:border-r lg:pb-0 lg:pr-4">
+                        <button type="button" data-settings-nav="player" data-i18n="settingsCategoryPlayer" aria-current="page"
+                            class="shrink-0 rounded-md px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-600/50 aria-[current=page]:bg-gray-600 aria-[current=page]:font-semibold aria-[current=page]:text-white"></button>
+                        <button type="button" data-settings-nav="languages" data-i18n="settingsCategoryLanguages"
+                            class="shrink-0 rounded-md px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-600/50 aria-[current=page]:bg-gray-600 aria-[current=page]:font-semibold aria-[current=page]:text-white"></button>
+                        <button type="button" data-settings-nav="audio" data-i18n="settingsCategoryAudio"
+                            class="shrink-0 rounded-md px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-600/50 aria-[current=page]:bg-gray-600 aria-[current=page]:font-semibold aria-[current=page]:text-white"></button>
+                        <button type="button" data-settings-nav="interface" data-i18n="settingsCategoryInterface"
+                            class="shrink-0 rounded-md px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-600/50 aria-[current=page]:bg-gray-600 aria-[current=page]:font-semibold aria-[current=page]:text-white"></button>
+                        <button type="button" data-settings-nav="shorts" data-i18n="settingsCategoryShorts"
+                            class="shrink-0 rounded-md px-3 py-2 text-left text-sm text-gray-300 hover:bg-gray-600/50 aria-[current=page]:bg-gray-600 aria-[current=page]:font-semibold aria-[current=page]:text-white"></button>
+                        <button type="button" data-settings-nav="advanced" data-i18n="settingsCategoryAdvanced"
+                            class="shrink-0 rounded-md border-l-2 border-orange-500 px-3 py-2 text-left text-sm text-orange-300 hover:bg-orange-900/30 aria-[current=page]:bg-orange-900/30 aria-[current=page]:font-semibold aria-[current=page]:text-orange-200"></button>
+                    </nav>
+                    </aside>
+                    <div class="min-w-0">
+                    <h2 id="activeSettingsCategory" data-settings-category-heading="player" class="mb-5 text-xl font-semibold text-white"></h2>
+                    <div id="settingsFeatureList" class="space-y-6">
                     <!-- Video Quality Feature -->
-                    <div class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors">
+                    <div data-settings-category="player" class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-lg font-medium text-white" data-i18n="featureVideoQuality"></h2>
@@ -105,7 +132,7 @@
                     </div>
                     
                     <!-- Video Speed Feature -->
-                    <div class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors">
+                    <div data-settings-category="player" class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-lg font-medium text-white" data-i18n="featureVideoSpeed"></h2>
@@ -174,7 +201,7 @@
                     </div>
                     
                     <!-- Subtitles Language Feature -->
-                    <div class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors">
+                    <div data-settings-category="languages" class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors" hidden>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-lg font-medium text-white" data-i18n="featureSubtitles"></h2>
@@ -234,7 +261,7 @@
                     </div>
 
                     <!-- Audio Normalizer Feature -->
-                    <div class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors">
+                    <div data-settings-category="audio" class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-lg font-medium text-white" data-i18n="featureAudioNormalizer"></h2>
@@ -315,7 +342,7 @@
                     </div>
                     
                     <!-- Default Volume Feature -->
-                    <div class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors">
+                    <div data-settings-category="audio" class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-lg font-medium text-white" data-i18n="featureVolume"></h2>
@@ -345,7 +372,7 @@
                     </div>
 
                     <!-- Hide Members Only Videos Feature -->
-                    <div class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors">
+                    <div data-settings-category="interface" class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors" hidden>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-lg font-medium text-white" data-i18n="featureHideMembersOnly"></h2>
@@ -364,7 +391,7 @@
                     </div>
 
                     <!-- Audio Track Language Feature -->
-                    <div class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors">
+                    <div data-settings-category="languages" class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors" hidden>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-lg font-medium text-white" data-i18n="featureAudioTrack"></h2>
@@ -407,7 +434,7 @@
                     </div>
 
                     <!-- Hide YouTube Shorts Feature -->
-                    <div class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors">
+                    <div data-settings-category="interface" class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors" hidden>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-lg font-medium text-white" data-i18n="featureHideShorts"></h2>
@@ -426,7 +453,7 @@
                     </div>
 
                     <!-- Prevent Shorts Loop Feature -->
-                    <div class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors">
+                    <div data-settings-category="shorts" class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors" hidden>
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-lg font-medium text-white" data-i18n="featurePreventShortsLoop"></h2>
@@ -445,7 +472,7 @@
                     </div>
 
                     <!-- Disable Number Keyboard Shortcuts -->
-                    <div class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors">
+                    <div data-settings-category="player" class="p-5 rounded-lg border border-gray-600 hover:bg-gray-600/30 transition-colors">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-lg font-medium text-white" data-i18n="featureDisableNumberShortcuts"></h2>
@@ -464,14 +491,11 @@
                     </div>
 
                     <!-- Extra Settings Section -->
-                    <div class="p-5 rounded-lg border border-orange-500 bg-gray-800/50">
-                        <div class="flex items-center justify-between cursor-pointer" id="extraSettingsToggle">
+                    <div data-settings-category="advanced" class="space-y-4" hidden>
+                        <div class="flex items-center justify-between">
                             <h2 class="text-lg font-medium text-orange-400" data-i18n="extraSettings"></h2>
-                            <svg id="extraSettingsArrow" class="w-5 h-5 text-orange-400 transform transition-transform duration-200" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M7 10l5 5 5-5H7z"/>
-                            </svg>
                         </div>
-                        <div id="extraSettingsContent" class="mt-4 space-y-4 hidden">
+                        <div id="extraSettingsContent" class="mt-4 space-y-4">
                             <!-- Enable Logs -->
                             <div class="p-3 rounded border border-gray-500 bg-gray-800/50">
                                 <div class="flex items-center justify-between">
@@ -493,6 +517,8 @@
                         </div>
                     </div>
 
+                </div>
+                    </div>
                 </div>
             </main>
 

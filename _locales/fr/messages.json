@@ -124,6 +124,36 @@
     "description": "Title of the collapsible extra settings section"
   },
 
+  "settingsCategoryInterface": {
+    "message": "Interface",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryPlayer": {
+    "message": "Lecteur",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryLanguages": {
+    "message": "Langues",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryAudio": {
+    "message": "Audio",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryShorts": {
+    "message": "Shorts",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryAdvanced": {
+    "message": "Avancé",
+    "description": "Settings navigation category"
+  },
+
   "featureEnableLogs": {
     "message": "Activer les logs",
     "description": "Title of the enable logs feature"

@@ -124,6 +124,36 @@
     "description": "Title of the collapsible extra settings section"
   },
 
+  "settingsCategoryInterface": {
+    "message": "Інтерфейс",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryPlayer": {
+    "message": "Плеєр",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryLanguages": {
+    "message": "Мови",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryAudio": {
+    "message": "Звук",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryShorts": {
+    "message": "Shorts",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryAdvanced": {
+    "message": "Додатково",
+    "description": "Settings navigation category"
+  },
+
   "featureEnableLogs": {
     "message": "Увімкнути журнали",
     "description": "Title of the enable logs feature"
