@@ -283,13 +283,23 @@
   },
 
   "labelDontApplyToVideos": {
-    "message": "Don't apply to videos",
+    "message": "Exclude videos by duration",
     "description": "Label for duration rule to exclude certain videos from speed setting"
   },
 
   "tooltipDurationRule": {
     "message": "If enabled, videos matching this rule will always play at normal speed (x1).",
     "description": "Tooltip explaining the duration rule"
+  },
+
+  "optionMoreThan": {
+    "message": "More than",
+    "description": "Duration rule option for excluding videos longer than the selected duration"
+  },
+
+  "optionLessThan": {
+    "message": "Less than",
+    "description": "Duration rule option for excluding videos shorter than the selected duration"
   },
 
   "labelMinutes": {

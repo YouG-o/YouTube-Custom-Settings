@@ -275,13 +275,23 @@
   },
 
   "labelDontApplyToVideos": {
-    "message": "Не застосовувати до відео",
+    "message": "Виключати за тривалістю",
     "description": "Label for duration rule to exclude certain videos from speed setting"
   },
 
   "tooltipDurationRule": {
     "message": "Якщо ввімкнено, відео, що відповідають цьому правилу, завжди відтворюватимуться зі звичайною швидкістю (x1).",
     "description": "Tooltip explaining the duration rule"
+  },
+
+  "optionMoreThan": {
+    "message": "Більше ніж",
+    "description": "Duration rule option for excluding videos longer than the selected duration"
+  },
+
+  "optionLessThan": {
+    "message": "Менше ніж",
+    "description": "Duration rule option for excluding videos shorter than the selected duration"
   },
 
   "labelMinutes": {

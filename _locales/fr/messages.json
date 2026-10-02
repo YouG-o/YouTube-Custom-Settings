@@ -275,13 +275,23 @@
   },
 
   "labelDontApplyToVideos": {
-    "message": "Ne pas appliquer aux vidéos",
+    "message": "Exclure selon la durée",
     "description": "Label for duration rule to exclude certain videos from speed setting"
   },
 
   "tooltipDurationRule": {
     "message": "Si activé, les vidéos correspondant à cette règle seront toujours lues à vitesse normale (x1).",
     "description": "Tooltip explaining the duration rule"
+  },
+
+  "optionMoreThan": {
+    "message": "Plus de",
+    "description": "Duration rule option for excluding videos longer than the selected duration"
+  },
+
+  "optionLessThan": {
+    "message": "Moins de",
+    "description": "Duration rule option for excluding videos shorter than the selected duration"
   },
 
   "labelMinutes": {

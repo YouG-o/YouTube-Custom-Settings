@@ -16,6 +16,41 @@
                 padding: 0;
                 overflow-x: hidden;
             }
+
+            #featureTooltip {
+                position: fixed;
+                z-index: 1000;
+                max-width: calc(100vw - 16px);
+                padding: 8px 12px;
+                border-radius: 6px;
+                background: rgba(17, 24, 39, 0.97);
+                color: white;
+                font-size: 12px;
+                line-height: 1.4;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+                pointer-events: none;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(3px);
+                transition: opacity 80ms ease-out, transform 80ms ease-out, visibility 80ms;
+            }
+
+            #featureTooltip[data-visible="true"] {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+
+            @keyframes section-reveal {
+                from {
+                    opacity: 0;
+                    transform: translateY(-4px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
         </style>
     </head>
     
@@ -38,16 +73,21 @@
             </header>
             <main class="py-4 pb-[70px]">
                 <div class="space-y-4">
+                    <details class="group/section rounded-lg border border-gray-600 bg-gray-800/30">
+                        <summary class="flex cursor-pointer list-none items-center justify-between p-3 text-sm font-semibold text-white">
+                            <span>Player</span>
+                            <svg class="h-4 w-4 text-gray-400 transition-transform group-open/section:rotate-180" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5H7z"/></svg>
+                        </summary>
+                        <div class="space-y-3 px-3 pb-3 group-open/section:animate-[section-reveal_180ms_ease-out]">
                     <!-- Video Quality Feature -->
                     <div class="p-3 rounded-lg border border-gray-600 hover:bg-gray-600 transition-colors">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-sm font-medium text-white" data-i18n="featureVideoQuality"></h2>
-                                <div class="relative group tooltip">
-                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" viewBox="0 0 24 24" fill="currentColor">
+                                <div>
+                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" data-tooltip-i18n="tooltipVideoQuality" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                                     </svg>
-                                    <span class="absolute z-20 bottom-full left-0 ml-[-20px] mb-2 w-[220px] px-3 py-2 text-xs text-white bg-gray-900/95 rounded-md shadow-lg whitespace-normal opacity-0 pointer-events-none invisible group-hover:opacity-100 group-hover:visible transition-opacity" data-i18n="tooltipVideoQuality"></span>
                                 </div>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
@@ -72,11 +112,10 @@
                             </div>
                             <div class="flex items-center justify-between mb-2 mt-4">
                                 <div class="flex gap-2 items-center">
-                                    <div class="relative group tooltip">
-                                        <svg class="w-5 h-5 text-gray-400 cursor-help group-hover:text-gray-300" viewBox="0 0 24 24" fill="currentColor">
+                                    <div>
+                                        <svg class="w-5 h-5 text-gray-400 cursor-help group-hover:text-gray-300" data-tooltip-i18n="tooltipCustomQualityOrder" viewBox="0 0 24 24" fill="currentColor">
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                                         </svg>
-                                        <span class="absolute z-20 bottom-full left-0 ml-[-20px] mb-2 w-[260px] px-3 py-2 text-xs text-white bg-gray-900/95 rounded-md shadow-lg whitespace-normal opacity-0 pointer-events-none invisible group-hover:opacity-100 group-hover:visible transition-opacity" data-i18n="tooltipCustomQualityOrder"></span>
                                     </div>
                                     <span class="text-sm text-blue-300 font-semibold" data-i18n="labelCustomQualityOrder"></span>
                                 </div>
@@ -97,11 +136,10 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-sm font-medium text-white" data-i18n="featureVideoSpeed"></h2>
-                                <div class="relative group tooltip">
-                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" viewBox="0 0 24 24" fill="currentColor">
+                                <div>
+                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" data-tooltip-i18n="tooltipVideoSpeed" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                                     </svg>
-                                    <span class="absolute z-20 bottom-full left-0 ml-[-20px] mb-2 w-[220px] px-3 py-2 text-xs text-white bg-gray-900/95 rounded-md shadow-lg whitespace-normal opacity-0 pointer-events-none invisible group-hover:opacity-100 group-hover:visible transition-opacity" data-i18n="tooltipVideoSpeed"></span>
                                 </div>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
@@ -120,54 +158,77 @@
                                     value="1"
                                     class="w-full bg-gray-800 text-white text-sm rounded-lg px-2 py-1 border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
                             </div>
-                            <div class="mt-2 flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <div class="relative group tooltip">
-                                        <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" viewBox="0 0 24 24" fill="currentColor">
+                            <div class="mt-3 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-md border-l-2 border-gray-500 bg-gray-800/50 px-2 py-2">
+                                <div class="flex min-w-0 flex-wrap items-center gap-2">
+                                    <div>
+                                        <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" data-tooltip-i18n="tooltipApplyToShorts" viewBox="0 0 24 24" fill="currentColor">
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                                         </svg>
-                                        <span class="absolute z-20 bottom-full left-0 ml-[-20px] mb-2 w-[220px] px-3 py-2 text-xs text-white bg-gray-900/95 rounded-md shadow-lg whitespace-normal opacity-0 pointer-events-none invisible group-hover:opacity-100 group-hover:visible transition-opacity" data-i18n="tooltipApplyToShorts"></span>
                                     </div>
                                 </div>
-                                <label for="applyShortsSpeed" class="text-sm text-gray-300 whitespace-nowrap" data-i18n="labelApplyToShorts"></label>
+                                    <label for="applyShortsSpeed" class="min-w-0 text-sm leading-5 text-gray-200" data-i18n="labelApplyToShorts"></label>
                                 <div class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" class="sr-only peer" id="applyShortsSpeed" checked>
                                     <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                                 </div>
                             </div>
-                            <div class="mt-2 flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <div class="relative group tooltip">
-                                        <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" viewBox="0 0 24 24" fill="currentColor">
+                            <div class="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 rounded-md border-l-2 border-gray-500 bg-gray-800/50 px-2 py-2">
+                                <div class="flex min-w-0 flex-wrap items-center gap-2">
+                                    <div>
+                                        <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" data-tooltip-i18n="tooltipDurationRule" viewBox="0 0 24 24" fill="currentColor">
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                                         </svg>
-                                        <span class="absolute z-20 bottom-full left-0 ml-[-20px] mb-2 w-[220px] px-3 py-2 text-xs text-white bg-gray-900/95 rounded-md shadow-lg whitespace-normal opacity-0 pointer-events-none invisible group-hover:opacity-100 group-hover:visible transition-opacity" data-i18n="tooltipDurationRule"></span>
                                     </div>
-                                    <select id="durationRuleType" class="bg-gray-800 text-white rounded px-2 py-1 border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
-                                        <option value="greater">&gt;</option>
-                                        <option value="less">&lt;</option>
+                                    <label for="durationRuleEnabled" class="text-sm leading-5 text-gray-200" data-i18n="labelDontApplyToVideos"></label>
+                                    <select id="durationRuleType" class="min-w-0 bg-gray-700 text-white text-sm rounded px-2 py-1 border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="greater" data-i18n="optionMoreThan"></option>
+                                        <option value="less" data-i18n="optionLessThan"></option>
                                     </select>
                                     <input type="number" id="durationRuleMinutes" min="1" max="999" value="5"
                                         class="w-16 bg-gray-800 text-white rounded px-2 py-1 border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
-                                    <span class="text-sm text-gray-300 mr-2" data-i18n="labelMins"></span>
+                                    <span class="text-sm text-gray-300 whitespace-nowrap" data-i18n="labelMins"></span>
                                 </div>
-                                <label class="relative inline-flex items-center cursor-pointer ml-2">
+                                <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" class="sr-only peer" id="durationRuleEnabled">
                                     <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                                 </label>
                             </div>
                         </div>
                     </div>
+                    <!-- Disable Number Keyboard Shortcuts -->
+                    <div class="p-3 rounded-lg border border-gray-600 hover:bg-gray-600 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-sm font-medium text-white" data-i18n="featureDisableNumberShortcuts"></h2>
+                                <div>
+                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" data-tooltip-i18n="tooltipDisableNumberShortcuts" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" id="disableNumberShortcutsFeature">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                        </div>
+                    </details>
+                    <details class="group/section rounded-lg border border-gray-600 bg-gray-800/30">
+                        <summary class="flex cursor-pointer list-none items-center justify-between p-3 text-sm font-semibold text-white">
+                            <span>Languages</span>
+                            <svg class="h-4 w-4 text-gray-400 transition-transform group-open/section:rotate-180" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5H7z"/></svg>
+                        </summary>
+                        <div class="space-y-3 px-3 pb-3 group-open/section:animate-[section-reveal_180ms_ease-out]">
                     <!-- Subtitles Language Feature -->
                     <div class="p-3 rounded-lg border border-gray-600 hover:bg-gray-600 transition-colors">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-sm font-medium text-white" data-i18n="featureSubtitles"></h2>
-                                <div class="relative group tooltip">
-                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" viewBox="0 0 24 24" fill="currentColor">
+                                <div>
+                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" data-tooltip-i18n="tooltipSubtitles" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                                     </svg>
-                                    <span class="absolute z-20 bottom-full left-0 ml-[-20px] mb-2 w-[220px] px-3 py-2 text-xs text-white bg-gray-900/95 rounded-md shadow-lg whitespace-normal opacity-0 pointer-events-none invisible group-hover:opacity-100 group-hover:visible transition-opacity" data-i18n="tooltipSubtitles"></span>
                                 </div>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
@@ -202,11 +263,10 @@
                             </select>
                             <div class="mt-2 flex items-center justify-between">
                                 <div class="flex items-center gap-2">
-                                    <div class="relative group tooltip">
-                                        <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" viewBox="0 0 24 24" fill="currentColor">
+                                    <div>
+                                            <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" data-tooltip-i18n="tooltipSubtitlesAsr" viewBox="0 0 24 24" fill="currentColor">
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                                         </svg>
-                                        <span class="absolute z-20 bottom-full left-0 ml-[-20px] mb-2 w-[220px] px-3 py-2 text-xs text-white bg-gray-900/95 rounded-md shadow-lg whitespace-normal opacity-0 pointer-events-none invisible group-hover:opacity-100 group-hover:visible transition-opacity" data-i18n="tooltipSubtitlesAsr"></span>
                                     </div>
                                     <label for="subtitlesAsr" class="text-sm text-gray-300" data-i18n="labelSubtitlesAsr"></label>
                                 </div>
@@ -217,16 +277,64 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Audio Track Language Feature -->
+                    <div class="p-3 rounded-lg border border-gray-600 hover:bg-gray-600 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-sm font-medium text-white" data-i18n="featureAudioTrack"></h2>
+                                <div>
+                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" data-tooltip-i18n="tooltipAudioTrack" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" id="audioTrackFeature">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <div class="mt-2 audio-track-language-container" id="audioTrackContainer">
+                            <select id="audioTrackLanguage" class="w-full bg-gray-800 text-white text-sm rounded-lg px-2 py-1 border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="original" data-i18n="optionOriginal"></option>
+                                <option value="en" data-i18n="labelEnglish"></option>
+                                <option value="fr" data-i18n="labelFrench"></option>
+                                <option value="es" data-i18n="labelSpanish"></option>
+                                <option value="ar" data-i18n="labelArabic"></option>
+                                <option value="zh" data-i18n="labelChinese"></option>
+                                <option value="nl" data-i18n="labelDutch"></option>
+                                <option value="de" data-i18n="labelGerman"></option>
+                                <option value="he" data-i18n="labelHebrew"></option>
+                                <option value="hi" data-i18n="labelHindi"></option>
+                                <option value="id" data-i18n="labelIndonesian"></option>
+                                <option value="it" data-i18n="labelItalian"></option>
+                                <option value="ja" data-i18n="labelJapanese"></option>
+                                <option value="ko" data-i18n="labelKorean"></option>
+                                <option value="pl" data-i18n="labelPolish"></option>
+                                <option value="pt" data-i18n="labelPortuguese"></option>
+                                <option value="ru" data-i18n="labelRussian"></option>
+                                <option value="tr" data-i18n="labelTurkish"></option>
+                                <option value="uk" data-i18n="labelUkrainian"></option>
+                                <option value="vi" data-i18n="labelVietnamese"></option>
+                            </select>
+                        </div>
+                    </div>
+                        </div>
+                    </details>
+                    <details class="group/section rounded-lg border border-gray-600 bg-gray-800/30">
+                        <summary class="flex cursor-pointer list-none items-center justify-between p-3 text-sm font-semibold text-white">
+                            <span>Audio</span>
+                            <svg class="h-4 w-4 text-gray-400 transition-transform group-open/section:rotate-180" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5H7z"/></svg>
+                        </summary>
+                        <div class="space-y-3 px-3 pb-3 group-open/section:animate-[section-reveal_180ms_ease-out]">
                     <!-- Audio Normalizer Feature -->
                     <div class="p-3 rounded-lg border border-gray-600 hover:bg-gray-600 transition-colors">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-sm font-medium text-white" data-i18n="featureAudioNormalizer"></h2>
-                                <div class="relative group tooltip">
-                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" viewBox="0 0 24 24" fill="currentColor">
+                                <div>
+                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" data-tooltip-i18n="tooltipAudioNormalizer" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                                     </svg>
-                                    <span class="absolute z-20 bottom-full left-0 ml-[-20px] mb-2 w-[220px] px-3 py-2 text-xs text-white bg-gray-900/95 rounded-md shadow-lg whitespace-normal opacity-0 pointer-events-none invisible group-hover:opacity-100 group-hover:visible transition-opacity" data-i18n="tooltipAudioNormalizer"></span>
                                 </div>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
@@ -301,11 +409,10 @@
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-sm font-medium text-white" data-i18n="featureVolume"></h2>
-                                <div class="relative group tooltip">
-                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" viewBox="0 0 24 24" fill="currentColor">
+                                <div>
+                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" data-tooltip-i18n="tooltipVolume" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                                     </svg>
-                                    <span class="absolute z-20 bottom-full left-0 ml-[-20px] mb-2 w-[220px] px-3 py-2 text-xs text-white bg-gray-900/95 rounded-md shadow-lg whitespace-normal opacity-0 pointer-events-none invisible group-hover:opacity-100 group-hover:visible transition-opacity" data-i18n="tooltipVolume"></span>
                                 </div>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
@@ -325,16 +432,23 @@
                             <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 text-sm pointer-events-none select-none">%</span>
                         </div>
                     </div>
+                        </div>
+                    </details>
+                    <details class="group/section rounded-lg border border-gray-600 bg-gray-800/30">
+                        <summary class="flex cursor-pointer list-none items-center justify-between p-3 text-sm font-semibold text-white">
+                            <span>Interface</span>
+                            <svg class="h-4 w-4 text-gray-400 transition-transform group-open/section:rotate-180" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5H7z"/></svg>
+                        </summary>
+                        <div class="space-y-3 px-3 pb-3 group-open/section:animate-[section-reveal_180ms_ease-out]">
                     <!-- Hide Members Only Videos Feature -->
                     <div class="p-3 rounded-lg border border-gray-600 hover:bg-gray-600 transition-colors">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-sm font-medium text-white" data-i18n="featureHideMembersOnly"></h2>
-                                <div class="relative group tooltip">
-                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" viewBox="0 0 24 24" fill="currentColor">
+                                <div>
+                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" data-tooltip-i18n="tooltipHideMembersOnly" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                                     </svg>
-                                    <span class="absolute z-20 bottom-full left-0 ml-[-20px] mb-2 w-[220px] px-3 py-2 text-xs text-white bg-gray-900/95 rounded-md shadow-lg whitespace-normal opacity-0 pointer-events-none invisible group-hover:opacity-100 group-hover:visible transition-opacity" data-i18n="tooltipHideMembersOnly"></span>
                                 </div>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
@@ -343,58 +457,15 @@
                             </label>
                         </div>
                     </div>
-                    <!-- Audio Track Language Feature -->
-                    <div class="p-3 rounded-lg border border-gray-600 hover:bg-gray-600 transition-colors">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <h2 class="text-sm font-medium text-white" data-i18n="featureAudioTrack"></h2>
-                                <div class="relative group tooltip">
-                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                                    </svg>
-                                    <span class="absolute z-20 bottom-full left-0 ml-[-20px] mb-2 w-[220px] px-3 py-2 text-xs text-white bg-gray-900/95 rounded-md shadow-lg whitespace-normal opacity-0 pointer-events-none invisible group-hover:opacity-100 group-hover:visible transition-opacity" data-i18n="tooltipAudioTrack"></span>
-                                </div>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="sr-only peer" id="audioTrackFeature">
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                            </label>
-                        </div>
-                        <div class="mt-2 audio-track-language-container" id="audioTrackContainer">
-                            <select id="audioTrackLanguage" class="w-full bg-gray-800 text-white text-sm rounded-lg px-2 py-1 border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
-                                <option value="original" data-i18n="optionOriginal"></option>
-                                <option value="en" data-i18n="labelEnglish"></option>
-                                <option value="fr" data-i18n="labelFrench"></option>
-                                <option value="es" data-i18n="labelSpanish"></option>
-                                <option value="ar" data-i18n="labelArabic"></option>
-                                <option value="zh" data-i18n="labelChinese"></option>
-                                <option value="nl" data-i18n="labelDutch"></option>
-                                <option value="de" data-i18n="labelGerman"></option>
-                                <option value="he" data-i18n="labelHebrew"></option>
-                                <option value="hi" data-i18n="labelHindi"></option>
-                                <option value="id" data-i18n="labelIndonesian"></option>
-                                <option value="it" data-i18n="labelItalian"></option>
-                                <option value="ja" data-i18n="labelJapanese"></option>
-                                <option value="ko" data-i18n="labelKorean"></option>
-                                <option value="pl" data-i18n="labelPolish"></option>
-                                <option value="pt" data-i18n="labelPortuguese"></option>
-                                <option value="ru" data-i18n="labelRussian"></option>
-                                <option value="tr" data-i18n="labelTurkish"></option>
-                                <option value="uk" data-i18n="labelUkrainian"></option>
-                                <option value="vi" data-i18n="labelVietnamese"></option>
-                            </select>
-                        </div>
-                    </div>
                     <!-- Hide Shorts Feature -->
                     <div class="p-3 rounded-lg border border-gray-600 hover:bg-gray-600 transition-colors">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-sm font-medium text-white" data-i18n="featureHideShorts"></h2>
-                                <div class="relative group tooltip">
-                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" viewBox="0 0 24 24" fill="currentColor">
+                                <div>
+                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" data-tooltip-i18n="tooltipHideShorts" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                                     </svg>
-                                    <span class="absolute z-20 bottom-full left-0 ml-[-20px] mb-2 w-[220px] px-3 py-2 text-xs text-white bg-gray-900/95 rounded-md shadow-lg whitespace-normal opacity-0 pointer-events-none invisible group-hover:opacity-100 group-hover:visible transition-opacity" data-i18n="tooltipHideShorts"></span>
                                 </div>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
@@ -403,16 +474,23 @@
                             </label>
                         </div>
                     </div>
+                        </div>
+                    </details>
+                    <details class="group/section rounded-lg border border-gray-600 bg-gray-800/30">
+                        <summary class="flex cursor-pointer list-none items-center justify-between p-3 text-sm font-semibold text-white">
+                            <span>Shorts</span>
+                            <svg class="h-4 w-4 text-gray-400 transition-transform group-open/section:rotate-180" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5H7z"/></svg>
+                        </summary>
+                        <div class="space-y-3 px-3 pb-3 group-open/section:animate-[section-reveal_180ms_ease-out]">
                     <!-- Prevent Shorts Loop Feature -->
                     <div class="p-3 rounded-lg border border-gray-600 hover:bg-gray-600 transition-colors">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <h2 class="text-sm font-medium text-white" data-i18n="featurePreventShortsLoop"></h2>
-                                <div class="relative group tooltip">
-                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" viewBox="0 0 24 24" fill="currentColor">
+                                <div>
+                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" data-tooltip-i18n="tooltipPreventShortsLoop" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                                     </svg>
-                                    <span class="absolute z-20 bottom-full left-0 ml-[-20px] mb-2 w-[220px] px-3 py-2 text-xs text-white bg-gray-900/95 rounded-md shadow-lg whitespace-normal opacity-0 pointer-events-none invisible group-hover:opacity-100 group-hover:visible transition-opacity" data-i18n="tooltipPreventShortsLoop"></span>
                                 </div>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
@@ -421,25 +499,8 @@
                             </label>
                         </div>
                     </div>
-                    <!-- Disable Number Keyboard Shortcuts -->
-                    <div class="p-3 rounded-lg border border-gray-600 hover:bg-gray-600 transition-colors">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <h2 class="text-sm font-medium text-white" data-i18n="featureDisableNumberShortcuts"></h2>
-                                <div class="relative group tooltip">
-                                    <svg class="w-4 h-4 text-gray-400 cursor-help group hover:text-gray-300" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                                    </svg>
-                                    <span class="absolute z-20 bottom-full left-0 ml-[-20px] mb-2 w-[220px] px-3 py-2 text-xs text-white bg-gray-900/95 rounded-md shadow-lg whitespace-normal opacity-0 pointer-events-none invisible group-hover:opacity-100 group-hover:visible transition-opacity" data-i18n="tooltipDisableNumberShortcuts"></span>
-                                </div>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" class="sr-only peer" id="disableNumberShortcutsFeature">
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                            </label>
                         </div>
-                    </div>
-
+                    </details>
                     <!-- Extra Settings Section -->
                     <div class="p-3 rounded-lg border border-orange-500 bg-gray-800/50">
                         <div class="flex items-center justify-between cursor-pointer" id="extraSettingsToggle">
@@ -453,11 +514,10 @@
                             <div class="p-2 rounded border border-gray-500 bg-gray-800/50">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-2">
-                                        <div class="relative group tooltip">
-                                            <svg class="w-3 h-3 text-gray-400 cursor-help hover:text-gray-300" viewBox="0 0 24 24" fill="currentColor">
+                                        <div>
+                                            <svg class="w-3 h-3 text-gray-400 cursor-help hover:text-gray-300" data-tooltip-i18n="tooltipEnableLogs" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                                             </svg>
-                                            <span class="absolute z-20 bottom-full left-0 ml-[-20px] mb-2 w-[220px] px-3 py-2 text-xs text-white bg-gray-900/95 rounded-md shadow-lg whitespace-normal opacity-0 pointer-events-none invisible group-hover:opacity-100 group-hover:visible transition-opacity" data-i18n="tooltipEnableLogs"></span>
                                         </div>
                                         <h3 class="text-xs font-medium text-gray-200" data-i18n="featureEnableLogs"></h3>
                                     </div>
@@ -492,6 +552,7 @@
                 </div>
             </footer>
         </div>
+        <div id="featureTooltip" role="tooltip" aria-hidden="true"></div>
         <script src="../browser-polyfill.js"></script>
         <script src="popup.js" type="module"></script>
     </body>

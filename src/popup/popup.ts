@@ -433,6 +433,81 @@ function toggleContainer(container: HTMLElement, isVisible: boolean) {
     container.style.display = isVisible ? 'block' : 'none';
 }
 
+function initFeatureTooltips() {
+    const tooltip = document.getElementById('featureTooltip');
+    const triggers = document.querySelectorAll<SVGSVGElement>('[data-tooltip-i18n]');
+
+    if (!tooltip) return;
+
+    let activeTrigger: SVGSVGElement | null = null;
+
+    const positionTooltip = (trigger: SVGSVGElement) => {
+        const triggerBounds = trigger.getBoundingClientRect();
+        const tooltipBounds = tooltip.getBoundingClientRect();
+        const margin = 8;
+        const left = Math.min(
+            Math.max(margin, triggerBounds.left + triggerBounds.width / 2 - tooltipBounds.width / 2),
+            Math.max(margin, window.innerWidth - tooltipBounds.width - margin)
+        );
+        let top = triggerBounds.top - tooltipBounds.height - margin;
+
+        if (top < margin) {
+            top = triggerBounds.bottom + margin;
+        }
+
+        top = Math.min(top, Math.max(margin, window.innerHeight - tooltipBounds.height - margin));
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+    };
+
+    const hideTooltip = () => {
+        tooltip.removeAttribute('data-visible');
+        tooltip.setAttribute('aria-hidden', 'true');
+        activeTrigger?.removeAttribute('aria-describedby');
+        activeTrigger = null;
+    };
+
+    const showTooltip = (trigger: SVGSVGElement) => {
+        const key = trigger.dataset.tooltipI18n;
+        if (!key) return;
+
+        const message = getMessage(key);
+        if (!message) return;
+
+        if (activeTrigger && activeTrigger !== trigger) {
+            activeTrigger.removeAttribute('aria-describedby');
+        }
+
+        activeTrigger = trigger;
+        trigger.setAttribute('aria-label', message);
+        trigger.setAttribute('aria-describedby', tooltip.id);
+        tooltip.textContent = message;
+        tooltip.setAttribute('aria-hidden', 'false');
+        tooltip.setAttribute('data-visible', 'true');
+        positionTooltip(trigger);
+    };
+
+    triggers.forEach((trigger) => {
+        const key = trigger.dataset.tooltipI18n;
+        if (key) trigger.setAttribute('aria-label', getMessage(key));
+        trigger.tabIndex = 0;
+        trigger.addEventListener('pointerenter', () => showTooltip(trigger));
+        trigger.addEventListener('pointerleave', () => {
+            if (document.activeElement !== trigger) hideTooltip();
+        });
+        trigger.addEventListener('focus', () => showTooltip(trigger));
+        trigger.addEventListener('blur', hideTooltip);
+    });
+
+    window.addEventListener('resize', () => {
+        if (activeTrigger) positionTooltip(activeTrigger);
+    });
+    document.addEventListener('scroll', hideTooltip, true);
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') hideTooltip();
+    });
+}
+
 // Update all active YouTube tabs with new settings
 async function updateActiveTabs(settings: ExtensionSettings) {
     const tabs = await browser.tabs.query({ url: '*://*.youtube.com/*' });
@@ -573,6 +648,7 @@ function initEventListeners() {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     localizeDocument();
+    initFeatureTooltips();
     displayExtensionVersion();
     loadSettings();
     initEventListeners();
