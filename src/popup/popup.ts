@@ -25,6 +25,7 @@ const videoQualityOptionsContainer = document.getElementById('videoQualityOption
 const videoSpeedFeature = document.getElementById('videoSpeedFeature') as HTMLInputElement;
 const videoSpeedSelect = document.getElementById('videoSpeed') as HTMLSelectElement;
 const videoSpeedContainer = document.getElementById('videoSpeedContainer') as HTMLDivElement;
+const showRemainingTimeToggle = document.getElementById('showRemainingTime') as HTMLInputElement;
 
 const subtitlesToggle = document.getElementById('subtitlesTranslation') as HTMLInputElement;
 const subtitlesPreferenceSelect = document.getElementById('subtitlesLanguage') as HTMLSelectElement;
@@ -283,6 +284,7 @@ async function loadSettings() {
         videoSpeedSelect.value = String(settings.videoSpeed.value);
         toggleContainer(videoSpeedContainer, videoSpeedFeature.checked);
         applyShortsSpeed.checked = settings.videoSpeed.applyToShorts !== false;
+        showRemainingTimeToggle.checked = settings.videoSpeed.showRemainingTime ?? false;
         
         subtitlesToggle.checked = settings.subtitlesPreference.enabled;
         subtitlesPreferenceSelect.value = settings.subtitlesPreference.value;
@@ -373,6 +375,7 @@ async function saveSettings() {
             enabled: videoSpeedFeature.checked,
             value: parseFloat(videoSpeedSelect.value),
             applyToShorts: applyShortsSpeed.checked,
+            showRemainingTime: showRemainingTimeToggle.checked,
             durationRuleEnabled: durationRuleEnabled.checked,
             durationRuleType: durationRuleType.value as 'greater' | 'less',
             durationRuleMinutes: parseInt(durationRuleMinutes.value, 10)
@@ -644,6 +647,7 @@ function initEventListeners() {
     
     // Add listener for the checkbox itself as well
     applyShortsSpeed.addEventListener('change', saveSettings);
+    showRemainingTimeToggle.addEventListener('change', saveSettings);
     
     // Manual activation toggle
     audioNormalizerManual.addEventListener('change', saveSettings);
