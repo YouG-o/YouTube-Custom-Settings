@@ -272,13 +272,36 @@
         return (videoData && videoData.video_id) || window.location.href;
     }
 
+    function getShowRemainingTimePreference() {
+        const raw = localStorage.getItem('YCS_SETTINGS');
+        const ycsSettings = raw ? JSON.parse(raw) : {};
+        return ycsSettings.videoSpeed?.showRemainingTime === true;
+    }
+
     function isRemainingMode(video) {
+        const showRemainingTime = getShowRemainingTimePreference();
+        const videoKey = getVideoKey(video);
         const mode = window[MODE_STATE_KEY];
-        return !!mode && mode.remaining && mode.videoKey === getVideoKey(video);
+
+        if (!mode || mode.videoKey !== videoKey || mode.showRemainingTime !== showRemainingTime) {
+            window[MODE_STATE_KEY] = {
+                videoKey,
+                showRemainingTime,
+                remaining: showRemainingTime
+            };
+            return showRemainingTime;
+        }
+
+        return showRemainingTime && mode.remaining;
     }
 
     function setRemainingMode(video, enabled) {
-        window[MODE_STATE_KEY] = { videoKey: getVideoKey(video), remaining: enabled };
+        const showRemainingTime = getShowRemainingTimePreference();
+        window[MODE_STATE_KEY] = {
+            videoKey: getVideoKey(video),
+            showRemainingTime,
+            remaining: enabled
+        };
     }
 
     function createAdjustedProgressBadge(video) {
@@ -329,9 +352,8 @@
             .forEach((badge) => badge.remove());
     }
 
-    // Show the time at the current playback speed beside YouTube's timer:
-    // "(3:03 / 16:16)" for elapsed time, "(-13:13 / 16:16)" for remaining time.
-    // A click on the time display switches between the two. Each new video starts with elapsed time.
+    // Show the time at the current playback speed only when the preference is enabled.
+    // A click on YouTube's time display switches between elapsed and remaining time.
     // It uses the live playback rate, so a manual speed change is shown too.
     function startAdjustedProgressDisplay(speed, attempt = 0) {
         stopAdjustedProgressDisplay();
@@ -352,8 +374,9 @@
             const currentSpeed = video.playbackRate;
             const durationSeconds = getVideoDurationSeconds();
             let text = '';
+            const showRemainingTime = getShowRemainingTimePreference();
 
-            if (Number.isFinite(currentSpeed) && currentSpeed > 0 && currentSpeed !== 1 &&
+            if (showRemainingTime && Number.isFinite(currentSpeed) && currentSpeed > 0 && currentSpeed !== 1 &&
                 Number.isFinite(durationSeconds) && durationSeconds > 0) {
                 const elapsedSeconds = Number.isFinite(video.currentTime) ? video.currentTime : 0;
                 const duration = formatTime(durationSeconds / currentSpeed);
@@ -367,6 +390,7 @@
                 badge.title = `Time at ${currentSpeed}x playback speed`;
             }
 
+            badge.style.display = text ? 'inline-block' : 'none';
             if (badge.textContent !== text) {
                 badge.textContent = text;
             }
@@ -374,6 +398,7 @@
 
         const clickHandler = (e) => {
             if (!(e.target instanceof Element) || !e.target.closest('.ytp-time-contents')) return;
+            if (!getShowRemainingTimePreference()) return;
             setRemainingMode(video, !isRemainingMode(video));
             update();
         };

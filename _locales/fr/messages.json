@@ -124,6 +124,36 @@
     "description": "Title of the collapsible extra settings section"
   },
 
+  "settingsCategoryInterface": {
+    "message": "Interface",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryPlayer": {
+    "message": "Lecteur",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryLanguages": {
+    "message": "Langues",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryAudio": {
+    "message": "Audio",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryShorts": {
+    "message": "Shorts",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryAdvanced": {
+    "message": "Avancé",
+    "description": "Settings navigation category"
+  },
+
   "featureEnableLogs": {
     "message": "Activer les logs",
     "description": "Title of the enable logs feature"
@@ -274,14 +304,34 @@
     "description": "Tooltip explaining the apply to Shorts toggle"
   },
 
+  "labelShowRemainingTime": {
+    "message": "Afficher le temps restant à la vitesse choisie",
+    "description": "Label for the toggle to show remaining time adjusted to playback speed"
+  },
+
+  "tooltipShowRemainingTime": {
+    "message": "Affiche une estimation du temps restant ajustée à la vitesse de lecture choisie.",
+    "description": "Tooltip explaining the remaining time toggle"
+  },
+
   "labelDontApplyToVideos": {
-    "message": "Ne pas appliquer aux vidéos",
+    "message": "Exclure selon la durée",
     "description": "Label for duration rule to exclude certain videos from speed setting"
   },
 
   "tooltipDurationRule": {
     "message": "Si activé, les vidéos correspondant à cette règle seront toujours lues à vitesse normale (x1).",
     "description": "Tooltip explaining the duration rule"
+  },
+
+  "optionMoreThan": {
+    "message": "Plus de",
+    "description": "Duration rule option for excluding videos longer than the selected duration"
+  },
+
+  "optionLessThan": {
+    "message": "Moins de",
+    "description": "Duration rule option for excluding videos shorter than the selected duration"
   },
 
   "labelMinutes": {

@@ -25,6 +25,7 @@ const videoQualityOptionsContainer = document.getElementById('videoQualityOption
 const videoSpeedFeature = document.getElementById('videoSpeedFeature') as HTMLInputElement;
 const videoSpeedSelect = document.getElementById('videoSpeed') as HTMLSelectElement;
 const videoSpeedContainer = document.getElementById('videoSpeedContainer') as HTMLDivElement;
+const showRemainingTimeToggle = document.getElementById('showRemainingTime') as HTMLInputElement;
 
 const subtitlesToggle = document.getElementById('subtitlesTranslation') as HTMLInputElement;
 const subtitlesPreferenceSelect = document.getElementById('subtitlesLanguage') as HTMLSelectElement;
@@ -283,6 +284,7 @@ async function loadSettings() {
         videoSpeedSelect.value = String(settings.videoSpeed.value);
         toggleContainer(videoSpeedContainer, videoSpeedFeature.checked);
         applyShortsSpeed.checked = settings.videoSpeed.applyToShorts !== false;
+        showRemainingTimeToggle.checked = settings.videoSpeed.showRemainingTime ?? false;
         
         subtitlesToggle.checked = settings.subtitlesPreference.enabled;
         subtitlesPreferenceSelect.value = settings.subtitlesPreference.value;
@@ -373,6 +375,7 @@ async function saveSettings() {
             enabled: videoSpeedFeature.checked,
             value: parseFloat(videoSpeedSelect.value),
             applyToShorts: applyShortsSpeed.checked,
+            showRemainingTime: showRemainingTimeToggle.checked,
             durationRuleEnabled: durationRuleEnabled.checked,
             durationRuleType: durationRuleType.value as 'greater' | 'less',
             durationRuleMinutes: parseInt(durationRuleMinutes.value, 10)
@@ -431,6 +434,119 @@ async function saveSettings() {
 // Toggle visibility of container based on checkbox state
 function toggleContainer(container: HTMLElement, isVisible: boolean) {
     container.style.display = isVisible ? 'block' : 'none';
+}
+
+function initSettingsCategoryNavigation() {
+    const navigation = document.querySelector<HTMLElement>('[data-settings-navigation]');
+    const featureList = document.getElementById('settingsFeatureList');
+    const activeHeading = document.getElementById('activeSettingsCategory');
+
+    if (!navigation || !featureList || !activeHeading) return;
+
+    const buttons = Array.from(navigation.querySelectorAll<HTMLButtonElement>('[data-settings-nav]'));
+    const featureCards = Array.from(featureList.querySelectorAll<HTMLElement>('[data-settings-category]'));
+
+    const selectCategory = (button: HTMLButtonElement) => {
+        const category = button.dataset.settingsNav;
+        if (!category) return;
+
+        buttons.forEach((item) => {
+            if (item === button) {
+                item.setAttribute('aria-current', 'page');
+            } else {
+                item.removeAttribute('aria-current');
+            }
+        });
+
+        featureCards.forEach((card) => {
+            card.hidden = card.dataset.settingsCategory !== category;
+        });
+
+        activeHeading.dataset.settingsCategoryHeading = category;
+        activeHeading.textContent = button.textContent?.trim() ?? '';
+    };
+
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => selectCategory(button));
+    });
+
+    const initialButton = buttons.find(button => button.getAttribute('aria-current') === 'page') ?? buttons[0];
+    if (initialButton) selectCategory(initialButton);
+}
+
+function initFeatureTooltips() {
+    const tooltip = document.getElementById('featureTooltip');
+    const triggers = document.querySelectorAll<SVGSVGElement>('[data-tooltip-i18n]');
+
+    if (!tooltip) return;
+
+    let activeTrigger: SVGSVGElement | null = null;
+
+    const positionTooltip = (trigger: SVGSVGElement) => {
+        const triggerBounds = trigger.getBoundingClientRect();
+        const tooltipBounds = tooltip.getBoundingClientRect();
+        const margin = 8;
+        const left = Math.min(
+            Math.max(margin, triggerBounds.left + triggerBounds.width / 2 - tooltipBounds.width / 2),
+            Math.max(margin, window.innerWidth - tooltipBounds.width - margin)
+        );
+        let top = triggerBounds.top - tooltipBounds.height - margin;
+
+        if (top < margin) {
+            top = triggerBounds.bottom + margin;
+        }
+
+        top = Math.min(top, Math.max(margin, window.innerHeight - tooltipBounds.height - margin));
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+    };
+
+    const hideTooltip = () => {
+        tooltip.removeAttribute('data-visible');
+        tooltip.setAttribute('aria-hidden', 'true');
+        activeTrigger?.removeAttribute('aria-describedby');
+        activeTrigger = null;
+    };
+
+    const showTooltip = (trigger: SVGSVGElement) => {
+        const key = trigger.dataset.tooltipI18n;
+        if (!key) return;
+
+        const message = getMessage(key);
+        if (!message) return;
+
+        if (activeTrigger && activeTrigger !== trigger) {
+            activeTrigger.removeAttribute('aria-describedby');
+        }
+
+        activeTrigger = trigger;
+        trigger.setAttribute('aria-label', message);
+        trigger.setAttribute('aria-describedby', tooltip.id);
+        tooltip.textContent = message;
+        tooltip.setAttribute('aria-hidden', 'false');
+        tooltip.setAttribute('data-visible', 'true');
+        positionTooltip(trigger);
+    };
+
+    triggers.forEach((trigger) => {
+        const key = trigger.dataset.tooltipI18n;
+        if (key) trigger.setAttribute('aria-label', getMessage(key));
+        trigger.tabIndex = 0;
+        trigger.addEventListener('pointerenter', () => showTooltip(trigger));
+        trigger.addEventListener('pointerleave', () => {
+            if (document.activeElement !== trigger) hideTooltip();
+        });
+        trigger.addEventListener('focus', () => showTooltip(trigger));
+        trigger.addEventListener('blur', hideTooltip);
+    });
+
+    window.addEventListener('resize', () => {
+        if (activeTrigger) positionTooltip(activeTrigger);
+    });
+    document.addEventListener('scroll', hideTooltip, true);
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') hideTooltip();
+    });
 }
 
 // Update all active YouTube tabs with new settings
@@ -531,6 +647,7 @@ function initEventListeners() {
     
     // Add listener for the checkbox itself as well
     applyShortsSpeed.addEventListener('change', saveSettings);
+    showRemainingTimeToggle.addEventListener('change', saveSettings);
     
     // Manual activation toggle
     audioNormalizerManual.addEventListener('change', saveSettings);
@@ -573,6 +690,8 @@ function initEventListeners() {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     localizeDocument();
+    initSettingsCategoryNavigation();
+    initFeatureTooltips();
     displayExtensionVersion();
     loadSettings();
     initEventListeners();

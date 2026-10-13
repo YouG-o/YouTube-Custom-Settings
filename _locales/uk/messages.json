@@ -124,6 +124,36 @@
     "description": "Title of the collapsible extra settings section"
   },
 
+  "settingsCategoryInterface": {
+    "message": "Інтерфейс",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryPlayer": {
+    "message": "Плеєр",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryLanguages": {
+    "message": "Мови",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryAudio": {
+    "message": "Звук",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryShorts": {
+    "message": "Shorts",
+    "description": "Settings navigation category"
+  },
+
+  "settingsCategoryAdvanced": {
+    "message": "Додатково",
+    "description": "Settings navigation category"
+  },
+
   "featureEnableLogs": {
     "message": "Увімкнути журнали",
     "description": "Title of the enable logs feature"
@@ -274,14 +304,34 @@
     "description": "Tooltip explaining the apply to Shorts toggle"
   },
 
+  "labelShowRemainingTime": {
+    "message": "Показувати час до завершення з вибраною швидкістю",
+    "description": "Label for the toggle to show remaining time adjusted to playback speed"
+  },
+
+  "tooltipShowRemainingTime": {
+    "message": "Показувати приблизний час до завершення з урахуванням вибраної швидкості відтворення.",
+    "description": "Tooltip explaining the remaining time toggle"
+  },
+
   "labelDontApplyToVideos": {
-    "message": "Не застосовувати до відео",
+    "message": "Виключати за тривалістю",
     "description": "Label for duration rule to exclude certain videos from speed setting"
   },
 
   "tooltipDurationRule": {
     "message": "Якщо ввімкнено, відео, що відповідають цьому правилу, завжди відтворюватимуться зі звичайною швидкістю (x1).",
     "description": "Tooltip explaining the duration rule"
+  },
+
+  "optionMoreThan": {
+    "message": "Більше ніж",
+    "description": "Duration rule option for excluding videos longer than the selected duration"
+  },
+
+  "optionLessThan": {
+    "message": "Менше ніж",
+    "description": "Duration rule option for excluding videos shorter than the selected duration"
   },
 
   "labelMinutes": {
