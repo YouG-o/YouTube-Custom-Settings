@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.15.0] - 2026-10-13
+
+### Added
+- Added a Video Speed setting to enable or disable the adjusted remaining-time display. It is disabled by default.
+
 ### Changed
-- The adjusted progress badge can show the remaining time at the current speed (e.g. `(-13:13)`). A click on the player time switches it between elapsed and remaining time. Each new video starts with elapsed time.
+- The adjusted progress badge shows the remaining time at the current speed (e.g. `(-13:13)`) only when the new setting is enabled. A click on the player time switches it between elapsed and remaining time. When enabled, each new video starts with remaining time.
 - The adjusted progress badge uses the live playback speed, so it also updates when the speed is changed by hand.
+- Refactored the settings / popup UI to group features into clearer sections and improve the popup and desktop layout readability.
 
 ## [1.14.1] - 2026-08-28
 
@@ -177,7 +183,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *Note: This changelog was introduced in version 1.2.12. For earlier version history, please refer to the [GitHub releases](https://github.com/YouG-o/YouTube_Custom_Settings/releases).*
 
-[Unreleased]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.14.1...HEAD
+[Unreleased]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.15.0...HEAD
+[1.15.0]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.14.1...v1.15.0
 [1.14.1]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.14.0...v1.14.1
 [1.14.0]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.13.2...v1.14.0
 [1.13.2]: https://github.com/YouG-o/YouTube_Custom_Settings/compare/v1.13.1...v1.13.2
